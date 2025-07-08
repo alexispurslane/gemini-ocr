@@ -8,6 +8,17 @@ This project uses UV, so it should be very easy to install and run, unlike most 
 
 The code is originally based on the code [here](https://apidog.com/blog/gemini-2-0-flash-ocr/), but I've since made it far more performant (through asynchrony) and robust, as well as encapsulated it into a relatively self explanatory and easy to use CLI utility.
 
+## How it works
+
+This pipeline executes a multi stage document transformation.
+
+- The script converts each page of the input PDF into a separate JPG image at 150dpi, caching the results in an output folder.
+- It processes these images in batches, feeding them to Gemini 2.0 Flash Lite to perform OCR and extract the raw text content into an intermediate file. Each image is processed as a separate request to minimize hallucinations, but each request in a batch is processed simultaniously (asynchronously), while the batches themselves are processed sequentially, to both speed up the process but avoid spamming too many requests at once.
+- The raw text is then split into large, overlapping chunks. This ensures context is not lost at the boundaries during the next step.
+- Each chunk is passed to Gemini 2.0 Flash with a detailed harmonization prompt, which reflows paragraphs, standardizes markdown, and removes OCR artifacts. Again, these chunks are treated as separate asynchronous requests to minimize hallucinations and confusion, where these requests are grouped into sequentially processed batches.
+- The cleaned chunks are stitched together into the final output markdown file.
+- Finally, it runs a `wdiff` between the raw intermediate text and the final harmonized text. The diff report is fed to Gemini one last time to perform a QA analysis and generate a list of potential errors.
+
 ## Example
 
 - [before](https://egressac.wordpress.com/2014/10/01/postcapitalist-desire-37-pieces-of-flair-october-2014/)
