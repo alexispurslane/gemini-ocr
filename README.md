@@ -7,3 +7,9 @@ I've tried every OCR solution on the planet in my archival and collection proces
 This project uses UV, so it should be very easy to install and run, unlike most Python packages. I make no promises though.
 
 The code is originally based on the code [here](https://apidog.com/blog/gemini-2-0-flash-ocr/), but I've since made it far more performant (through asynchrony) and robust, as well as encapsulated it into a relatively self explanatory and easy to use CLI utility.
+
+## Example
+
+- [before](https://egressac.wordpress.com/2014/10/01/postcapitalist-desire-37-pieces-of-flair-october-2014/)
+
+- [after](./postcapitalist-desire.md)

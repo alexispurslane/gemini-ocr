@@ -160,7 +160,7 @@ Harmonize the content by:
 6. Find text that is likely to be a heading based on its size or content, and convert it to **consistent levels** of markdown heading. Nest these to create a nicely structured document.
 7. Make sure the text is broken properly into paragraphs.
 
-OUTPUT NOTHING EXCEPT THE NEW TEXT.
+OUTPUT NOTHING EXCEPT THE NEW TEXT. DO NOT LEAVE OUT ANY WORDS.
 """,
 max_output_tokens=8192
         )
