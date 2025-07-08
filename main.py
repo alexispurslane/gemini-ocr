@@ -11,6 +11,7 @@ from PIL import Image
 import io
 from split import split_overlapping
 import pypdf
+from printable import filter_nonprintable
 
 # Configure the Gemini API
 client = genai.Client()
@@ -98,12 +99,12 @@ For multi-column layouts:
 
 ## Final Warning
 
-Make sure to preserve ALL core content text! Do not change any words of that text. DO NOT USE CODE FENCES.
+Make sure to preserve ALL core content text! Do not change any words of that text. DO NOT USE CODE FENCES. Do not output anything but the text of the document, with no preamble.
 """,
 max_output_tokens=8192
         )
     )
-    return response.text
+    return filter_nonprintable(response.text)
 
 loop = asyncio.get_event_loop()
 
@@ -153,12 +154,11 @@ The following chunk of text is part of a larger text that was extracted from a l
 
 Harmonize the content by:
 1. Ensure consistent Markdown formatting throughout
-2. Fix any table structure issues at batch boundaries
-3. Make sure that sentences, paragraphs, or words flow correctly and nicely.
-4. Remove any unwanted unicode characters or similar garabage.
-5. Preserve all punctuation.
-6. Find text that is likely to be a heading based on its size or content, and convert it to **consistent levels** of markdown heading. Nest these to create a nicely structured document.
-7. Make sure the text is broken properly into paragraphs.
+2. Make sure that sentences, paragraphs, or words flow correctly and nicely.
+3. Preserve all punctuation.
+4. Find text that is likely to be a heading based on its size or content, and convert it to **consistent levels** of markdown heading. Nest these to create a nicely structured document.
+5. Make sure the text is broken properly into paragraphs.
+6. Ensure that bibliography entries are in a numbered list.
 
 OUTPUT NOTHING EXCEPT THE NEW TEXT. DO NOT LEAVE OUT ANY WORDS.
 """,
