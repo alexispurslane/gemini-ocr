@@ -1,4 +1,5 @@
 import re
+import argparse
 import difflib
 import glob
 import asyncio
@@ -243,13 +244,28 @@ def harmonize_document(input_file, output_file):
         print(f"\033[92m✅ Final/extracted/guessed word count: \033[0m\033[94m{len(total_words.split(' '))}/{extracted_words}/{guessed_words}\033[0m")
         run_qa_linter(extracted_text, total_words, len(total_words.split(' ')), extracted_words, guessed_words)
     
-    
+parser = argparse.ArgumentParser(description='Process a PDF and generate markdown files.')
+parser.add_argument('input_pdf', help='Path to the input PDF file')
+parser.add_argument('output_name', help='Base name for output files and directory')
+parser.add_argument('--clean', action='store_true', help='Clean up intermediate files and directory')
+
 if __name__ == "__main__":
-    image_paths = convert_pdf_to_images(sys.argv[1], sys.argv[2])
-    if not os.path.exists(sys.argv[2]+".intermediate.md"):
-        process_large_pdf(image_paths, sys.argv[2]+".intermediate.md")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.input_pdf):
+        print("\033[93m⚠️  That PDF does not exist.\033[0m")
+        exit(1)
+
+    image_paths = convert_pdf_to_images(args.input_pdf, args.output_name)
+    
+    if not os.path.exists(args.output_name + ".intermediate.md"):
+        process_large_pdf(image_paths, args.output_name + ".intermediate.md")
     else:
         print("\033[93m⚠️  Reusing previous intermediate file. Delete it if you don't want that to happen.\033[0m")
-    harmonize_document(sys.argv[2]+".intermediate.md", sys.argv[2]+".md")
-    #os.remove(sys.argv[2]+".intermediate.md")
-    #os.rmdir(sys.argv[2])
+    
+    harmonize_document(args.output_name + ".intermediate.md", args.output_name + ".md")
+    if args.clean:
+        os.remove(args.output_name + ".intermediate.md")
+        os.rmdir(args.output_name)
+        
+    exit(0)
