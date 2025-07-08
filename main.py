@@ -16,6 +16,7 @@ import pypdf
 from printable import filter_nonprintable
 import prompts
 from subprocess import run
+from shutil import rmtree
 
 # Configure the Gemini API
 client = genai.Client()
@@ -266,6 +267,6 @@ if __name__ == "__main__":
     harmonize_document(args.output_name + ".intermediate.md", args.output_name + ".md")
     if args.clean:
         os.remove(args.output_name + ".intermediate.md")
-        os.rmdir(args.output_name)
+        rmtree(args.output_name, ignore_errors=True)
         
     exit(0)
