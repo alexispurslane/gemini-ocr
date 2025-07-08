@@ -16,11 +16,21 @@ import pypdf
 from printable import filter_nonprintable
 import prompts
 from subprocess import run
-from shutil import rmtree
+import shutil
 
 # Configure the Gemini API
 client = genai.Client()
 PDF_TEXT=""
+
+print("Checking dependencies exist...")
+if shutil.which('wdiff') is None:
+    print("wdiff not found. Please install it:")
+    if sys.platform == 'win32':
+        print("Windows: Install using Chocolatey with 'choco install wdiff' or download from https://www.di-mgt.com.au/wdiff-for-windows.html")
+    elif sys.platform == 'darwin':
+        print("Mac: Install using Homebrew with 'brew install wdiff'")
+    else:
+        print("Linux: Use your package manager, e.g., 'sudo apt-get install wdiff' (Debian/Ubuntu) or 'sudo dnf install wdiff' (Red Hat), or use Linuxbrew with 'brew install wdiff'")
 
 def sort_key(s: str) -> list:
     return [int(p) if p.isdigit() else p for p in re.findall(r'\D+|\d+', s)]
@@ -267,6 +277,6 @@ if __name__ == "__main__":
     harmonize_document(args.output_name + ".intermediate.md", args.output_name + ".md")
     if args.clean:
         os.remove(args.output_name + ".intermediate.md")
-        rmtree(args.output_name, ignore_errors=True)
+        shutil.rmtree(args.output_name, ignore_errors=True)
         
     exit(0)
