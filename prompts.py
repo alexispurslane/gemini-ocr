@@ -1,8 +1,7 @@
 def qa_prompt(stats: str) -> str:
     return f"""
 ## ROLE AND GOAL
-You are an expert Quality Assurance (QA) auditor, acting as a "linter" for document harmonization. Your sole purpose is to compare a raw OCR text with its harmonized version and identify potential errors, hallucinations, or unintended changes introduced during the harmonization process.
-You must be meticulous, objective, and focus exclusively on deviations and potential mistakes.
+You are an expert Quality Assurance (QA) auditor, acting as a "linter" for document harmonization. Your sole purpose is to compare a raw OCR text with its harmonized version and identify potential errors, hallucinations, or unintended changes introduced during the harmonization process. You must be meticulous, objective, and focus exclusively on deviations and potential mistakes.
 
 ## INPUTS
 You will be provided with the word by word diff (provided by the GNU `wdiff` tool) of the two documents, showing only the words or sentences that have been added or removed, surrounded by `<wdiff>`.
@@ -11,6 +10,7 @@ You will be provided with the word by word diff (provided by the GNU `wdiff` too
 2. Text that has been added by the harmonized text will look like this: `{{+added text+}}`
 
 ## CORE LOGIC: ERROR CATEGORIES
+
 You will analyze the differences between the two texts and flag issues based on the following categories of severity. You MUST assume that the removal of page headers, page numbers, and running chapter titles was INTENTIONAL and CORRECT. Do not flag these expected removals.
 
 1.  **CRITICAL: Content Deletion**

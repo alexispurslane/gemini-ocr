@@ -53,9 +53,9 @@ def convert_pdf_to_images(pdf_path, output_folder, dpi=150):
     images = glob.glob(f'{output_folder}/*.jpg')
     image_count = len(images)
         
-    if page_count == image_count:
-        print("\033[93m⚠️  Reusing previous extracted images. Delete the output folder if you don't want that to happen.\033[0m")
-        image_paths = sorted(images, key=sort_key)
+    if page_count == image_count: 
+       print("\033[93m⚠️  Reusing previous extracted images. Delete the output folder if you don't want that to happen.\033[0m")
+       image_paths = sorted(images, key=sort_key)
     else:
         images = pdf2image.convert_from_path(pdf_path, dpi=dpi, thread_count=8)
 
@@ -83,7 +83,7 @@ def image_path_to_bytes(path: str):
     pil_im.save(b, 'jpeg')
     return b.getvalue()
 
-async def ocr_with_gemini(image_paths, instruction):
+async def ocr_with_gemini(image_paths):
     """Process images with Gemini 2.0 Flash for OCR"""
     images = [image_path_to_bytes(path) for path in image_paths]
 
@@ -111,7 +111,7 @@ def process_large_pdf(image_paths, output_file):
         start = time.time()
         print(f"\033[92m✅ Batches: \033[0m\033[94m{len(batches)}\033[0m")
         for i, batch in enumerate(batches):
-            batch_text = [ocr_with_gemini([image], "Extract all text, maintaining document structure") for image in batch]
+            batch_text = [ocr_with_gemini([image]) for image in batch]
             batch_text = loop.run_until_complete(asyncio.gather(*batch_text))
             if batch_text != None:
                 if None in batch_text:
@@ -151,7 +151,7 @@ async def gemini_clean_text(i: int, chunk: str):
         ],
         config=types.GenerateContentConfig(
             system_instruction=prompts.harmonize_prompt(),
-            max_output_tokens=8192,
+            max_output_tokens=4096,
             temperature=0.2
         )
     )
@@ -193,7 +193,6 @@ def colorize_text(text: str) -> str:
 
 def run_qa_linter(input_file: str, output_file: str, final: int, extracted: int, guessed: int):
     print("\033[92m👩‍⚕️ Looking for possible problems...\033[0m")
-    d = difflib.Differ()
     wdiff = str(run([
        "wdiff",
        input_file,
@@ -201,7 +200,7 @@ def run_qa_linter(input_file: str, output_file: str, final: int, extracted: int,
        "--no-common",
        "--ignore-case",
        "--statistics"
-   ], capture_output=True).stdout).split("======================================================================")
+    ], capture_output=True).stdout).split("======================================================================")
     diff = '\n'.join(wdiff[:-1])
     response = client.models.generate_content(
         model='gemini-2.0-flash',
@@ -214,6 +213,7 @@ def run_qa_linter(input_file: str, output_file: str, final: int, extracted: int,
         )
     )
     if response.text != None:
+        print(wdiff[-1])
         print(colorize_text(response.text))
     else:
         raise Exception("Model malfunctioned while doing QA.")
