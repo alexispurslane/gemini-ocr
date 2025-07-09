@@ -16,8 +16,9 @@ Large language models, and especially Gemini 2.0 Flash, change *everything* when
 *   [Acknowledgements](#acknowledgements)
 *   [How it works](#how-it-works)
 *   [Example](#example)
+*   [Footnotes](#footnotes)
 
-## Why LLMs, and why Gemini 2.0 Flash and Flash-Lite? {#why-llms-and-why-gemini-20-flash-and-flash-lite}
+## Why LLMs, and why Gemini 2.0 Flash and Flash-Lite?
 
 I've tried every OCR solution on the planet in my archival and collection process, and nothing beats Gemini 2.0 Flash's abilities, not just in multimodal capabilities for extraction of text from images[^1][^2], but also in its cheap and fast ability to do large scale heuristic text edits to clean things up afterwards[^4] without hallucinating[^3]. To quote that first source regarding OCR:
 
@@ -27,11 +28,11 @@ It should also be noted that the top-of-the-line traditional OCR systems just do
 
 It's far from perfect, and whether it gets something right is generally stochastic to some degree of course, being a language model --- but whether a particular regex works on each instance of what I want it to apply to in a given document, or will miss some, or overmatch, or apply a bad transformation that removes crucial words from sentences, is, while technically deterministic, *also* essentially nondeterministic as part of the cybernetic system that is me and my computer as a whole, so I don't see it as a problem, and by and large Gemini is more accurate than most OCR methods. Additionally, technically more correct but more garbage-filled OCR is less useful to me than slightly less correct but cleaner OCR, for what I'm doing.
 
-## Acknowledgements {#acknowledgements}
+## Acknowledgements
 
 The code is originally based on the code [here](https://apidog.com/blog/gemini-2-0-flash-ocr/), but I've since made it far more performant (through asynchrony) and robust, as well as encapsulated it into a relatively self explanatory and easy to use CLI utility.
 
-## How it works {#how-it-works}
+## How it works
 
 This pipeline executes a multi stage document transformation.
 
@@ -98,11 +99,13 @@ This pipeline executes a multi stage document transformation.
               └───────────────────┘
 ```
 
-## Example {#example}
+## Example
 
 - [before](https://egressac.wordpress.com/2014/10/01/postcapitalist-desire-37-pieces-of-flair-october-2014/)
 
 - [after](./postcapitalist-desire.md)
+
+## Footnotes
 
 [^1]: https://getomni.ai/blog/ocr-benchmark
 
