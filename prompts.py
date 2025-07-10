@@ -1,34 +1,36 @@
-def qa_prompt(stats: str) -> str:
-    return f"""
-## ROLE AND GOAL
-You are an expert Quality Assurance (QA) auditor, acting as a "linter" for document harmonization. Your sole purpose is to compare a raw OCR text with its harmonized version and identify potential errors, hallucinations, or unintended changes introduced during the harmonization process. You must be meticulous, objective, and focus exclusively on deviations and potential mistakes.
+def qa_prompt() -> str:
+    return """You are a text analysis expert. Your task is to analyze the differences between two versions of a document -- the raw OCR output from a PDF and a cleaned version of the same document -- and determine if they are important and why.
 
-## INPUTS
-You will be provided with the word by word diff (provided by the GNU `wdiff` tool) of the two documents, showing only the words or sentences that have been added or removed, surrounded by `<wdiff>`.
+## INPUT
 
-1. Text that has been removed by the harmonized text will look like this: `[-missing text-]`
-2. Text that has been added by the harmonized text will look like this: `{{+added text+}}`
+You will receive the following:
 
-## CORE LOGIC: ERROR CATEGORIES
+1.  Raw OCR text: The text extracted directly from a PDF using OCR.
+2.  Word-by-word diff output:  A detailed comparison showing the differences between the raw OCR text and the cleaned text, highlighting insertions, deletions, and substitutions.
 
-You will analyze the differences between the two texts and flag issues based on the following categories of severity. You MUST assume that the removal of page headers, page numbers, and running chapter titles was INTENTIONAL and CORRECT. Do not flag these expected removals.
+## TASK
 
-1.  **CRITICAL: Content Deletion**
-    *   Trigger: Any meaningful word, phrase, or sentence which the diff indicates has been removed and it is NOT clearly an OCR artifact (like a page number or header).
+1.  **Summarize Differences:**  Categorize and summarize the types of differences observed between the raw OCR and cleaned text. Focus on identifying common patterns or systematic errors in the OCR output.
+2.  **Assess Importance:** Evaluate the significance of each type of difference in the context of both the original PDF and the raw OCR text. Consider:
+    *   **Impact on Meaning:** Does the difference alter the meaning of the text or introduce inaccuracies?
+    *   **Information Loss:** Does the difference omit crucial details or context present in the original PDF?
+    *   **Readability:** Does the difference significantly impact the readability or coherence of the raw OCR text?
 
-## OUTPUT FORMAT
-Your output MUST be a Markdown list of issues. Each issue must follow this exact format:
-`* **[SEVERITY]** [Line: ~XX]: [Description of the issue.]`
-`  > Snippet from the diff showing the issue.`
+3.  **Output Format:** Present your analysis using bullet points, employing ANSI color codes to highlight the importance of each difference, and instead of markdown bold and italics:
+    *   \033[93mYellow\033[0m: Potentially important differences (e.g., character substitutions that *might* change meaning depending on context, addition or removal of common but potentially significant punctuation like hyphens and sometimes commas).
+    *   \033[91mRed\033[0m: Important differences (e.g., significant omissions, incorrect number substitutions, changes that clearly alter the meaning of a sentence).
 
-If you find no significant issues, your entire output MUST be the single line: `No significant issues found.`
+**Example 1:**
 
-## KEY STATISTICS
+*   **Difference:** OCR reads "12345" as "1234S".
+*   **Importance:** \033[91mRed\033[0m. This is an important difference because it misrepresents a numerical value.
 
-{stats}
-    
-## LINTER ANALYSIS TASK
-"""
+**Example 2:**
+
+*   **Difference:** OCR adds an asterisk to the end or beginning of a word.
+*   Do not output anything, this is not a big deal: it could be markdown formatting that's been added.
+
+Now, analyze the provided raw OCR text, word-by-word diff output, and keeping in mind the original PDF context, and provide your analysis in the specified format."""
 
 def harmonize_prompt() -> str:
     return """
