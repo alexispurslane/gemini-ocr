@@ -5,8 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+  "google-cloud-storage>=3.2.0",
   "google-genai>=1.24.0",
   "pdf2image>=1.17.0",
+  "pdfcropmargins>=2.2.1",
   "pillow>=11.3.0",
   "pypdf>=5.7.0",
 ]

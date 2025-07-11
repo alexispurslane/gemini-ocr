@@ -1,37 +1,3 @@
-def qa_prompt() -> str:
-    return """You are a text analysis expert. Your task is to analyze the differences between two versions of a document -- the raw OCR output from a PDF and a cleaned version of the same document -- and determine if they are important and why.
-
-## INPUT
-
-You will receive the following:
-
-1.  Raw OCR text: The text extracted directly from a PDF using OCR.
-2.  Word-by-word diff output:  A detailed comparison showing the differences between the raw OCR text and the cleaned text, highlighting insertions, deletions, and substitutions.
-
-## TASK
-
-1.  **Summarize Differences:**  Categorize and summarize the types of differences observed between the raw OCR and cleaned text. Focus on identifying common patterns or systematic errors in the OCR output.
-2.  **Assess Importance:** Evaluate the significance of each type of difference in the context of both the original PDF and the raw OCR text. Consider:
-    *   **Impact on Meaning:** Does the difference alter the meaning of the text or introduce inaccuracies?
-    *   **Information Loss:** Does the difference omit crucial details or context present in the original PDF?
-    *   **Readability:** Does the difference significantly impact the readability or coherence of the raw OCR text?
-
-3.  **Output Format:** Present your analysis using bullet points, employing ANSI color codes to highlight the importance of each difference, and instead of markdown bold and italics:
-    *   \033[93mYellow\033[0m: Potentially important differences (e.g., character substitutions that *might* change meaning depending on context, addition or removal of common but potentially significant punctuation like hyphens and sometimes commas).
-    *   \033[91mRed\033[0m: Important differences (e.g., significant omissions, incorrect number substitutions, changes that clearly alter the meaning of a sentence).
-
-**Example 1:**
-
-*   **Difference:** OCR reads "12345" as "1234S".
-*   **Importance:** \033[91mRed\033[0m. This is an important difference because it misrepresents a numerical value.
-
-**Example 2:**
-
-*   **Difference:** OCR adds an asterisk to the end or beginning of a word.
-*   Do not output anything, this is not a big deal: it could be markdown formatting that's been added.
-
-Now, analyze the provided raw OCR text, word-by-word diff output, and keeping in mind the original PDF context, and provide your analysis in the specified format."""
-
 def harmonize_prompt() -> str:
     return """
 ## ROLE
@@ -45,28 +11,29 @@ Your goal is to reflow and reformat a given chunk of text into clean, well-struc
 ## INPUTS
 
 You will receive two pieces of information:
-1.  `<chunk_context>`: A small piece of text from the end of the *previous* chunk to provide context.
-2.  `<chunk>`: The raw OCR'd text that you must process and clean.
+1. `<table_of_contents>`: A list of nested markdown headings representing the table of contents of the overall document.
+2. `<chunk_context>`: A small piece of text from the end of the *previous* chunk to provide context.
+3. `<chunk>`: The raw OCR'd text that you must process and clean.
 
 ## RULES
+    
+1. **Fix Broken Flow:**
+   * Remove page headers or footers and other extraneous document text that interrupts the flow of the primary text. (See below examples).
+   * Remove extra line breaks that break up paragraphs or sentences.
 
-1.  **Remove OCR Artifacts:** Your highest priority is to identify and **remove** text that is clearly an OCR artifact, such as a running page header, footer, or page number.
-    *   **Test for artifacts:** A line is likely an artifact if it interrupts the grammatical or logical flow of a sentence or paragraph. If a phrase is inserted mid-sentence and makes no sense in context, remove it.
-    *   These artifacts are often isolated by extra line breaks.
+2. **Structure Headings:**
+    * Identify text that functions as a heading. Cues include all-caps, being on a separate line, or introducing a new topic.
+    * Format headings using Markdown hashes (`#`, `##`, `###`, etc.).
+    * Use the `<table_of_contents>` to determine what level a heading you find should be by looking at a heading in the table of contents with similar text.
 
-2.  **Fix Broken Flow:** After removing artifacts, join lines that belong to the same sentence or paragraph. OCR frequently adds extra line breaks within paragraphs; you must remove them to create properly flowing text.
+3. **Format Lists & Formatting:**
+   * Correctly format numbered and bulleted lists (e.g., `l.` -> `1.`).
+   * Apply standard Markdown for emphasis (`*italics*`, `**bold**`).
+   * Standardize common notes (e.g., `NOTE:` -> `*Note:*`).
+   * Apply italics to book titles.
+   * Make sure that cited source lists (usually at the end of documents) are formatted using Markdown footnote formatting and separated by two line breaks.
 
-3.  **Structure Headings:**
-    *   Identify text that functions as a heading. Cues include all-caps, being on a separate line, or introducing a new topic.
-    *   Format headings using Markdown hashes (`#`, `##`, `###`, etc.).
-    *   Use the `<chunk_context>` to maintain a consistent and logical heading hierarchy.
-
-4.  **Format Lists & Formatting:**
-    *   Correctly format numbered and bulleted lists (e.g., `l.` -> `1.`).
-    *   Apply standard Markdown for emphasis (`*italics*`, `**bold**`).
-    *   Standardize common notes (e.g., `NOTE:` -> `*Note:*`).
-
-5.  **Content Preservation:** Other than the artifacts you are instructed to remove in Rule #1, you must preserve the original text. Do not rewrite sentences or change the meaning of the original words and punctuation.
+4. **Content Preservation:** Other than the artifacts you are instructed to remove in Rule #1, you must preserve the original text. Do not rewrite sentences or change the meaning of the original words and punctuation.
 
 ## OUTPUT INSTRUCTIONS
 
@@ -111,9 +78,9 @@ NOTE:  Temperature must be maintained at 25°C
 <harmonized>
 our methods were:
 
-1. Prepare solution A  
-2. Mix with solution B  
-3. Observe reaction  
+1. Prepare solution A
+2. Mix with solution B
+3. Observe reaction
 
 *Note:* Temperature must be maintained at 25°C
 </harmonized>
@@ -139,22 +106,111 @@ between puissance and the 'potentiality' Lyotard is keen to attack as the dawn o
 </harmonized>
 </example>
 
+<example>
+<table_of_contents>
+# HEADING A
+## HEADING B
+# HEADING C
+</table_of_contents>
+
+<chunk_context>
+end of the previous
+</chunk_context>
+    
+<chunk>
+section. HEADING B
+</chunk>
+
+<harmonized>
+section.
+
+## HEADING B
+</harmonized>
+</example>
+
+<example>
+<table_of_contents>
+# HEADING A
+## HEADING B
+# HEADING C
+</table_of_contents>
+
+<chunk_context>
+end of the previous
+</chunk_context>
+    
+<chunk>
+section. HEADING A
+</chunk>
+
+<harmonized>
+section.
+
+# HEADING B
+</harmonized>
+</example>
+    
 ## Output the raw harmonized text below:
 """
 
 def ocr_prompt() -> str:
-    return f"""These are pages from a PDF document. Extract all text content (**ignoring headers at the top of the page and footers at the bottom**) while preserving the structure, but make sure things are clean and nice as well.
+    return f"""## ROLE
+You are a document processing system specialized in extracting and formatting text from PDF pages while strictly preserving structural integrity and content accuracy.
 
-## Rules for Preserving Structure
+## GOAL
+Extract all textual content from PDF pages, while maintaining precise structural formatting according to specified rules.
 
-1. Make sure each bibliography entry is separated by two line breaks.
-2. Make sure to preserve the visual structure of the text, such as line breaks around headings and between table of contents entries.
+## RULES
+- Bibliography entries must be separated by two line breaks
+- Preserve visual structure elements (line breaks around headings, table of contents spacing)
+- For multi-column layouts:
+  - Process columns in left-to-right order
+  - Clearly separate content from different columns
+- Never alter any text content
+- Maintain original formatting elements (indentation, spacing, paragraph breaks)
 
-For multi-column layouts:
-1. Process columns from left to right
-2. Clearly separate content from different columns
+## OUTPUT INSTRUCTIONS
 
-## Final Warning
+Present extracted text with:
+1. No code fences or markdown formatting
+2. Clean, readable structure matching original document
+3. No commentary or summarization, only the final output.
+"""
 
-Make sure to preserve ALL core content text! Do not change any words of that text. DO NOT USE CODE FENCES. Do not output anything but the text of the document, with no preamble.
+def toc_prompt() -> str:
+    return """## ROLE
+You are an expert document analysis assistant working for a major publishing company, tasked with figuring out the table of contents of a book that has been submitted to you.
+
+## GOAL
+Extract **all** headings from a provided PDF document, including their corresponding page numbers and best-guess heading levels (H1, H2, H3) based on structural analysis of the document.
+
+## RULES
+1. Identify all textual headings in the document
+2. Assign heading levels based on:
+   - Font size/weight (if visible in PDF)
+   - Position relative to surrounding text
+   - Structural patterns in the document
+   - Semantic content
+3. Record exact page numbers for each heading
+4. Use H1 for main headings, H2 for subheadings, H3 for nested subheadings
+5. Handle complex cases by using contextual analysis when visual cues are ambiguous
+6. Ignore headings with the same text.
+7. Combine headings that are the same size and one is right after the other. For example:
+
+```
+POSTCAPITALIST
+DESIRE
+```
+
+should become
+
+```json
+{ "text": "POSTCAPITALIST DESIRE" }
+```
+
+## OUTPUT INSTRUCTIONS
+Return a structured list with the following elements for each heading:
+- "text": The exact heading text
+- "page_number": Integer page number
+- "level": "H1", "H2", or "H3" based on analysis
 """
