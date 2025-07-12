@@ -1,4 +1,5 @@
 import json
+import pprint
 import string
 import enum
 import pydantic
@@ -36,15 +37,9 @@ client = genai.Client(
 #                                 Phase one                                          #
 ######################################################################################
 
-class HeadingLevel(enum.Enum):
-  H1 = "H1"
-  H2 = "H2"
-  H3 = "H3"
-
 class TOCHeading(pydantic.BaseModel):
     text: str
-    page_number: int
-    level: HeadingLevel
+    level: int
 
 def get_toc(pdf_file):
     global COST
@@ -70,9 +65,8 @@ def get_toc(pdf_file):
             if key not in seen_headings:
                 seen_headings.add(key)
                 final_headings.append(heading)
-        toc_string = "\n".join([int(entry["level"][-1])*"#" + " " + entry["text"] for entry in final_headings])
-        print(toc_string)
-        return toc_string
+        
+        return final_headings
 
 def process_large_pdf(image_paths, output_folder):
     """Process images with Gemini 2.0 Flash for OCR"""
@@ -93,10 +87,12 @@ def process_large_pdf(image_paths, output_folder):
                             {"text": prompts.ocr_prompt()},
                             {"inline_data": { "data": base64.b64encode(bytes).decode("utf-8"), "mime_type": "image/jpeg" }}]}
                     ]
-                }
+                },
+                'generation_config': {'temperature': '0.1'}
             }) + "\n")
 
-    COST += run_batch(client, requests_file, output_folder, output_folder+".intermediate.md")
+    (cost, _) = run_batch(client, requests_file, output_folder, output_folder+".intermediate.md")
+    COST += cost
 
 def signal_handler(sig, frame):
     print('Quiting...')
@@ -111,7 +107,18 @@ signal.signal(signal.SIGINT, signal_handler)
 #                                 Phase three                                        #
 ######################################################################################
 
-def harmonize_document(input_file, output_folder, toc_string):
+def apply_table_of_contents(harmonized_text, headings):
+    def create_heading_regex(text):
+        a = re.escape(text).replace(":", r"[\n :]+").replace(" ", r",?\s?(?:\n+)?")
+        return r"^#?\s*(" + a + r")\n*"
+    pprint.pp(headings)
+    for heading in headings:
+        toc_string = "\n" + int(heading["level"])*"#" + " " + heading['text'] + "\n\n"
+        harmonized_text = re.sub(create_heading_regex(heading["text"]), toc_string, harmonized_text, flags=re.MULTILINE, count=2)
+        harmonized_text = re.sub(create_heading_regex(heading["text"].upper()), toc_string, harmonized_text, flags=re.MULTILINE, count=2)
+    return harmonized_text
+
+def harmonize_document(input_file, output_folder, headings):
     global CHUNK_OVERLAP_WORDS, PAGE_NUMBER, BATCH_JOB, COST
 
     print("\033[94m🔬 Harmonizing document...\033[0m")
@@ -122,8 +129,6 @@ def harmonize_document(input_file, output_folder, toc_string):
         for i, chunk in enumerate(chunks):
             words = chunk.split(' ')
             chunk_prompt = [
-                {"text": "<table_of_contents>\n" + toc_string + "\n</table_of_contents>"}
-            ] + [
                 {"text": "\n\n<chunk_context>\n" + " ".join(words[:CHUNK_OVERLAP_WORDS]) + "\n</chunk_context>\n\n"},
                 {"text": "\n\n<chunk>\n" + " ".join(words[CHUNK_OVERLAP_WORDS:]) + "\n</chunk>\n\n"}
             ] if i != 0 else [
@@ -140,10 +145,15 @@ def harmonize_document(input_file, output_folder, toc_string):
                             *chunk_prompt
                         ]}
                     ]
-                }
+                },
+                'generation_config': {'temperature': '0.1', 'max_output_tokens': 4096}
             }) + "\n")
 
-    COST += run_batch(client, requests_file, output_folder, output_folder+".md")
+    (cost, harmonized_text) = run_batch(client, requests_file, output_folder, output_folder+".md")
+    COST += cost
+    with open(output_folder+".md", "w") as f:
+        f.seek(0)
+        f.write(apply_table_of_contents(harmonized_text, headings))
     print("\n\n\033[92m📄 Cleaning done, wrote document to: \033[0m\033[94m" + output_folder+".md" + "\033[0m")
 
 ######################################################################################
@@ -165,7 +175,7 @@ def run_qa_linter(pdf_file: str, input_file: str, output_file: str):
             ],
             capture_output=True,
         )
-        diff_output = result.stdout.decode("utf-8").replace("\n======================================================================", "")
+        diff_output = result.stdout.decode("utf-8", errors="replace").replace("\n======================================================================", "")
     except Exception as e:
         print(f"Error running wdiff: {e}")
         return
@@ -204,7 +214,7 @@ if __name__ == "__main__":
         print("\033[93m⚠️  That PDF does not exist.\033[0m")
         exit(1)
 
-    image_paths, pdf_text = convert_pdf_to_images(args.input_pdf, args.output_name)
+    image_paths, pdf_text, page_count = convert_pdf_to_images(args.input_pdf, args.output_name)
 
     if not os.path.exists(args.output_name + ".intermediate.md"):
         process_large_pdf(image_paths, args.output_name)
@@ -216,7 +226,12 @@ if __name__ == "__main__":
 
     run_qa_linter(args.input_pdf, args.output_name  + ".intermediate.md", args.output_name + ".md")
 
-    print("\033[93m⚠️  Total cost: ${:,.4f}\033[0m".format(COST))
+
+    if COST > 0.3:
+        print("\033[93m⚠️  Total cost: ${:,.4f}, or {} pages per dollar\033[0m".format(COST, 1.0 / (COST / page_count)))
+    else:
+        print("\033[94mℹ️  Total cost: ${:,.4f}, or {} pages per dollar\033[0m".format(COST, 1.0 / (COST / page_count)))
+
 
     if args.clean:
         os.remove(args.output_name + ".intermediate.md")
