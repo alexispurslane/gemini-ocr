@@ -1,4 +1,6 @@
 import json
+import string
+import pprint
 import datetime
 import time
 import sys
@@ -48,7 +50,7 @@ def parse_json(s):
 def sort_key(s: str) -> list:
     return [int(p) if p.isdigit() else p for p in re.findall(r'\D+|\d+', s)]
 
-def run_batch(client, requests_file, output_folder, output_file=None) -> (float, str):
+def run_batch(client, requests_file, output_folder, output_file=None) -> (float, str, list[str]):
     global BATCH_JOB
     cost = 0
     uploaded_file = client.files.upload(
@@ -106,26 +108,43 @@ def run_batch(client, requests_file, output_folder, output_file=None) -> (float,
                 responses = sorted([parse_json(line) for line in file_content.split("\n") if len(line) != 0],
                                    key=lambda x: int(x["key"].split("/")[-1]))
                 fulltext = ""
-                for response in responses:
-                    if response != None:
-                        if "response" in response:
-                            response = response["response"]
+                raw_responses = []
+                for i, response in enumerate(responses):
+                    if response != None and "response" in response:
+                        response = response["response"]
+                        try:
+                            cost += ((int(response["usageMetadata"]["promptTokenCount"]) / 1_000_000) * 0.10 + (int(response["usageMetadata"].get("candidatesTokenCount", 0)) / 1_000_000) * 0.4) * 0.5
+                            
+                            raw_responses.append("")
                             for part in response["candidates"][0]["content"]["parts"]:
                                 fulltext += part["text"]
-                        else:
-                            print(response)
-                        cost += ((int(response["usageMetadata"]["promptTokenCount"]) / 1_000_000) * 0.10 + (int(response["usageMetadata"].get("candidatesTokenCount", 0)) / 1_000_000) * 0.4) * 0.5
+                                raw_responses[-1] += part["text"]
+                            
+                            if fulltext[-10:].strip()[-1] in string.punctuation:
+                                fulltext += "\n"
+                                raw_responses[-1] += "\n"
+                        except KeyError as e:
+                                print(f"\U0001F6A8  \033[31mMissing expected property on response object {i}: \033[0m")
+                                pprint.pp(response)
+                                if response["candidates"][0]["finishReason"] == "RECITATION":
+                                    print("\033[93m⚠️  Recitation error received, retrying.\033[0m")
+                                    (cost2, fulltext, pages) = run_batch(client, requests_file, output_folder, output_file)
+                                    return (cost + cost2, fulltext, pages)
+                                raise e
+                    else:
+                        print(response)
 
+                fulltext = WORD_JOIN_REGEX.sub(r"\1\2", fulltext.replace("\n\n", "\0").replace("\n", " ").replace("\0", "\n\n"))
                 if output_file != None:
                     with open(output_file, "w") as f:
                         f.seek(0)
-                        f.write(WORD_JOIN_REGEX.sub(r"\1\2", fulltext.replace("\n\n", "\0").replace("\n", " ").replace("\0", "\n\n")))
+                        f.write(fulltext)
                         print("\033[32m✅ File saved!\033[0m")
-                return (cost, WORD_JOIN_REGEX.sub(r"\1\2", fulltext.replace("\n\n", "\0").replace("\n", " ").replace("\0", "\n\n")))
+                return (cost, fulltext, raw_responses)
     else:
         raise Exception("Failed to upload batch.")
     
-def convert_pdf_to_images(pdf_path, output_folder, dpi=150) -> tuple[list[str], str, int]:
+def convert_pdf_to_images(pdf_path, output_folder, dpi=150, header_offset=0, footer_offset=0) -> tuple[list[str], str, int]:
     # Create output directory if it doesn't exist
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -146,18 +165,20 @@ def convert_pdf_to_images(pdf_path, output_folder, dpi=150) -> tuple[list[str], 
        print("\033[93m⚠️  Reusing previous extracted images. Delete the output folder if you don't want that to happen.\033[0m")
        image_paths = sorted(images, key=sort_key)
     else:
-        images = pdf2image.convert_from_path(pdf_path, dpi=dpi, thread_count=8)
+        images = pdf2image.convert_from_path(pdf_path, dpi=dpi, thread_count=8, )
 
         # Save images to the output folder
         image_paths = []
         for i, image in enumerate(images):
             image_path = os.path.join(output_folder, f'page_{i+1}.jpg')
+            image = image.crop((0, header_offset, image.width, image.height - footer_offset))
             image.save(image_path, 'JPEG')
             sys.stdout.write("\033[K")
             print(f"\033[92m✅ Page {i+1} saved as {image_path}\033[0m", end='\r')
             image_paths.append(image_path)
 
         print(f"\n\033[92m✨ Conversion completed. Total images: {len(images)}\033[0m")
-
+        
+    
     return (image_paths, pdf_text, page_count)
 

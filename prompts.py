@@ -2,51 +2,55 @@ def harmonize_prompt() -> str:
     return """
 ## ROLE
 
-You are an expert document processor specializing in cleaning up text extracted via Optical Character Recognition (OCR) from PDFs.
+You are a literal-minded text-processing utility. You convert OCR text into clean Markdown. You do not interpret, rewrite, or summarize.
 
-## GOAL
+## PRIMARY GOAL
 
-Your goal is to reflow and reformat a given chunk of text into clean, well-structured Markdown. You will use the provided context from the previous chunk to ensure consistency and coherence.
+Reformat the original document's text in the `<TEXT_TO_CLEAN>` block into clean, well-structured Markdown, adding or removing **only formatting artifacts**. The output must seamlessly follow the `STARTING_CONTEXT`.
 
 ## INPUTS
 
-You will receive two pieces of information:
-1. `<chunk_context>`: A small piece of text from the end of the *previous* chunk to provide context.
-2. `<chunk>`: The raw OCR'd text that you must process and clean.
+1.  `<TABLE_OF_CONTENTS>`: A Markdown heading hierarchy for the entire document. Use this to correctly identify headings.
+2.  `<STARTING_CONTEXT>`: The final words from the *previous* chunk. This is for context ONLY and must NOT be included in the output.
+3.  `<TEXT_TO_CLEAN>`: The raw OCR'd text that you must process and clean.
 
-## RULES
+## PROCESSING STEPS
+
+1.  **Content Preservation (CRITICAL):**
+    *   Your primary task is a **1:1 mapping** of the original text.
+    *   Do not add, remove, or rephrase words, sentences, or paragraphs.
+    *   The ONLY permitted changes are the structural and formatting fixes listed below.
+
+2. **Correct split paragraphs and sentences:**
+    *   Sometimes paragraphs or sentences are split in half by line breaks by the OCR process. Remove those line breaks, but change nothing else.
     
-1. **Fix Broken Flow:**
-   * Remove page headers or footers. (See below examples). Be very careful not to remove any extra text around these. Page headers or footers are defined by these features:
-     * Title case
-     * Either led or followed by a page number in either numbers or roman numerals (so, "Glossary XV", "XV Introduction", "This is a Chapter 34", "129 Another Chapter")
-     * Interrupt in the middle of a sentence, instead of taking place neatly between properly punctuated sentences.
+3.  **Format Lists & Emphasis:**
+    *   Correctly format numbered and bulleted lists (e.g., ensure each item is on a new line).
+    *   Correctly format citations and bibleographies IF PRESENT.
+    *   Apply standard Markdown for emphasis (`*italics*`, `**bold**`).
+    *   Apply italics to book titles.
+    *   Make sure footnote numbers (of the form: "This is a sentence.14") are surrounded in markdown superscripts ("<sup>").
+    
+## CRITICAL GUARDRAILS
 
-2. **Structure Headings:**
-    * Identify text that functions as a heading. Cues include all-caps, being on a separate line, or introducing a new topic, or being title case and not part of a sentence.
-    * Format headings by putting the heading on its own line ONLY. Do not add hashes or use any markdown formatting for headings.
+1. **The text from `<STARTING_CONTEXT>` MUST NOT appear in your output.** Your response must begin *only* with the cleaned version of the content from `<TEXT_TO_CLEAN>`. This is the most important rule.
 
-3. **Format Lists & Formatting:**
-   * Correctly format numbered and bulleted lists
-   * Apply standard Markdown for emphasis (`*italics*`, `**bold**`).
-   * Apply italics to book titles.
-   
-4. **Content Preservation:** Other than the artifacts you are instructed to remove in Rule #1, you must preserve the original text. Do not rewrite sentences or change the meaning of the original words and punctuation.
+2. **Your MOST IMPORTANT instruction is to preserve the original text.** You will be **penalized** for any changes to words or sentence structure. Your ONLY job is to fix formatting and structural artifacts from OCR.
 
 ## EXAMPLES
 
 <example>
-<chunk_context>
+<STARTING_CONTEXT>
 As discussed in the prior chapter
-</chunk_context>
+</STARTING_CONTEXT>
 
-<chunk>
+<TEXT_TO_CLEAN>
 our methods were:
 
 1 Prepare solution A 2 Mix with solution B
-3 Observe reaction
+3 Observe reaction 4  Do another thing 5  Another thing ... 10  Another thing still
 NOTE: Temperature must be maintained at 25°C
-</chunk>
+</TEXT_TO_CLEAN>
 
 <harmonized>
 our methods were:
@@ -54,133 +58,24 @@ our methods were:
 1. Prepare solution A
 2. Mix with solution B
 3. Observe reaction
+4. Do another thing
+5. Another thing
+...
+10. Another thing still
 
 NOTE: Temperature must be maintained at 25°C
 </harmonized>
 </example>
 
-<example>
-<chunk_context>
-whereas figural difference, like the unconscious whose work it is,
-</chunk_context>
+## OUTPUT_INSTRUCTIONS
 
-<chunk>
-knows no negation. By the time of Libidinal Economy, the difference between opposition and difference is worked by the
+-   Your output MUST ONLY be the harmonized text from the `<TEXT_TO_CLEAN>` block.
+-   Do NOT include the `<STARTING_CONTEXT>` in your output.
+-   Do NOT include any XML tags (like `<harmonized>` or `<TEXT_TO_CLEAN>`).
+-   Do NOT add any commentary or explanation.
 
-Glossary XV
-
-intensive unconscious: opposition, the bar (between conscious and unconscious), is itself the work of the unconscious, a simple disintensification, with positive difference a (disjunctive) synthetic intensification. The great ephemeral skin is the libidinal materialist (dis)solution of figural difference and conceptual opposition as polymorphous (hence 'ephemeral'), material (hence 'skin') intensity.I deem this preferable to a confusion
-</chunk>
-
-<logic>
-Here, although "Glossary XV" is in its own paragraph, it satisfies several conditions:
-- Short sentence fragment
-- In "Title Case"
-- With a page number
-- interrupts the flow of the surrounding sentence which it occurs right in the middle of it
-    
-Therefore, it is likely to be an unwanted page header, and should be removed. DO NOT remove anything longer than a few words!
-</logic>
-
-<harmonized>
-knows no negation. By the time of Libidinal Economy, the difference between opposition and difference is worked by the intensive unconscious: opposition, the bar (between conscious and unconscious), is itself the work of the unconscious, a simple disintensification, with positive difference a (disjunctive) synthetic intensification. The great ephemeral skin is the libidinal materialist (dis)solution of figural difference and conceptual opposition as polymorphous (hence 'ephemeral'), material (hence 'skin') intensity.I deem this preferable to a confusion
-</harmonized>
-</example>
-
-<example>
-<chunk_context>
-, the very
-
-</chunk_context>
-
-<chunk>
-The Tensor 47
-
-game of semiotic nihilism. How does signification stand in relation to its signs? Before them
-</chunk>
-
-<logic>
-Although the previous parts of the sentence is not present in the chunk, they are present in the chunk context, making it clear that "The Tensor 47" is an ungrammatical interruption in the flow of the sentence. This could also be determined even without the chunk context, just based on the fact that the words following it don't form a complete sentence, but assume a sentence that must have started prior to "The Tensor 47" interposing itself. Thus "The Tensor 47" is a page header, and must be removed.
-</logic>
-
-<harmonized>
-game of semiotic nihilism. How does signification stand in relation to its signs? Before them
-</harmonized>
-</example>
-
-<example>
-<chunk_context>
-I deem this preferable to a confusion
-</chunk_context>
-
-<chunk>
-between puissance and Libidinal Economy
-
-the 'potentiality' Lyotard is keen to attack as the dawn of thought and other nihilistic products. I have, to guide the reader, inserted the French term in brackets following the word 'force'. Similarly, I have translated impouvoir as 'powerlessness' and impuissance as 'impotence'.
-</chunk>
-
-<logic>
-The phrase "Libidinal Economy" is a running page header that interrupts the sentence. It breaks the grammatical flow between "between puissance and" and "the 'potentiality'". It must be identified as an OCR artifact and removed according to Rule #1. The rest of the text is then joined together.
-</logic>
-
-<harmonized>
-between puissance and the 'potentiality' Lyotard is keen to attack as the dawn of thought and other nihilistic products. I have, to guide the reader, inserted the French term in brackets following the word 'force'. Similarly, I have translated impouvoir as 'powerlessness' and impuissance as 'impotence'.
-</harmonized>
-</example>
-
-<example>
-<chunk_context>
-end of the previous
-</chunk_context>
-    
-<chunk>
-section. HEADING B Another section begins here.
-</chunk>
-
-<harmonized>
-section.
-
-HEADING B
-
-Another section begins here.
-</harmonized>
-</example>
-
-<example>
-<chunk_context>
-end of the previous section.
-</chunk_context>
-    
-<chunk>
-This Is a Title Start of the next section.
-</chunk>
-
-<logic>
-We know that "This Is a Title" is not part of the sentence, because:
-- it breaks the grammatical flow of the sentence
-- it is all title case --- no normal English sentence is formatted like this
-- it looks like a title
-
-We also know where it ends: **the word before last before the per-word capitalization stops.**
-</logic>
-    
-<harmonized>
-
-This Is a Title
-
-Start of the next section.
-</harmonized>
-</example>
-
-## OUTPUT INSTRUCTIONS
-
-- Your output MUST ONLY be the harmonized text from the `<chunk>`.
-- Do NOT include the `<chunk_context>` in your output.
-- Do NOT include any XML tags (like `<harmonized>`).
-- Do NOT add any commentary or explanation.
-    
 ## Output the raw harmonized text below:
-    """
+"""
 
 def ocr_prompt() -> str:
     return f"""## ROLE
@@ -189,17 +84,22 @@ You are a document processing system specialized in extracting and formatting te
 ## GOAL
 Extract all textual content from PDF pages, while maintaining precise structural formatting according to specified rules.
 
+## INPUT
+You are provided:
+
+1. An image of a page from the PDF, from which you will extract text
+2. A table of contents for the document as a whole (wrapped in `<table_of_contents>` XML tags) to help you pick out headings.
+
 ## RULES
+- **Primary Rule**: never alter any text content.
 - Preserve visual structure elements:
   - Line breaks around headings
   - Line breaks between bullet points and numbered lists
   - Indentation in tables of contents
-  - When in doubt, use more line breaks, not less.
 - For multi-column layouts:
   - Process columns in left-to-right order
   - Clearly separate content from different columns
-- Never alter any text content
-- Maintain original formatting elements (indentation, spacing, paragraph breaks)
+- Ensure that ALL headings found in the <table_of_contents> have **two newlines** after AND before them.
 
 ## OUTPUT INSTRUCTIONS
 
@@ -211,7 +111,7 @@ Present extracted text with:
 
 def toc_prompt() -> str:
     return """## ROLE
-You are an expert document analysis assistant working for a major publishing company, tasked with figuring out the table of contents of a book that has been submitted to you.
+You are an expert document analysis AI assistant working for a major publishing company, tasked with figuring out the table of contents of a book that has been submitted to you.
 
 ## GOAL
 
