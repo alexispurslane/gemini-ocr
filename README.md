@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Gemini OCR</h1>
 
-<p><img src="https://img.shields.io/badge/Python-3.x-blue.svg" alt="Python 3.0 badge"> <img src="https://img.shields.io/badge/License-MPL-yellow.svg" alt="MPL 2.0 badge"> <img src="https://img.shields.io/badge/Install_with-UV-orange.svg" alt="Install with UV"></p>
+<p><img src="https://img.shields.io/badge/Python-3.x-blue.svg" alt="Python 3.0 badge"> <img src="https://img.shields.io/badge/Install_with-UV-orange.svg" alt="Install with UV"></p>
 
 <p><small>✅ Cheap, 🚀 Fast, ✨ Clean.</small></p>
 </div>

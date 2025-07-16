@@ -1,373 +1,412 @@
-Mozilla Public License Version 2.0
+           __________________________________________________
+
+               THE NOOSPHERE PUBLIC LICENSE, VERSION 1.0
+                               (NPL-1.0)
+
+                            Alexis Purslane
+           __________________________________________________
+
+
+Table of Contents
+_________________
+
+1. *Section 1: The Legal Framework*
+.. 1. *Definitions*
+.. 2. *Grant of Rights*
+.. 3. *Conditions of This License*
+.. 4. *The Regurgitation Test*
+..... 1. Note on Legal Interpretation:
+2. *The Social Contract*
+.. 1. *The Creator's Wishes*
+.. 2. *The Consequence (If You Break Faith)*
+3. Disclaimer of Warranty
+4. Limitation of Liability
+5. Anti-Nationalist Jurisdiction as a Commons Defense
+6. Exhibit A: Recommended Preamble for Source Code Files
+
+
+*THIS LICENSE IS AN ACT OF LIBERATION.* It is intended to permanently
+ place a work into the public commons to enrich the noosphereâ€”the sphere
+ of human thought and collective intelligence. It is intended to end the
+ tyranny of the false concept of "intellectual property," which
+ introduces scarcity and territoriality into a sphere where none
+ naturally exists nor need exist, and its enforcement by the violence of
+ the long arm of the Law.
+
+The core of this license is the idea that *ONCE AN IDEA IS MADE PUBLIC,
+ONE MAY NOT CONTROL IT*.
+
+To defend this notion, we use the violence of the Law only to restrict
+the violence of the Law itself, and no more. All true freedom ---
+freedom that does not come at the expense of the equal freedom of others
+--- is preserved for those who wish to take it.
+
+
+1 *Section 1: The Legal Framework*
 ==================================
 
-1. Definitions
---------------
-
-1.1. "Contributor"
-    means each individual or legal entity that creates, contributes to
-    the creation of, or owns Covered Software.
-
-1.2. "Contributor Version"
-    means the combination of the Contributions of others (if any) used
-    by a Contributor and that particular Contributor's Contribution.
-
-1.3. "Contribution"
-    means Covered Software of a particular Contributor.
-
-1.4. "Covered Software"
-    means Source Code Form to which the initial Contributor has attached
-    the notice in Exhibit A, the Executable Form of such Source Code
-    Form, and Modifications of such Source Code Form, in each case
-    including portions thereof.
-
-1.5. "Incompatible With Secondary Licenses"
-    means
-
-    (a) that the initial Contributor has attached the notice described
-        in Exhibit B to the Covered Software; or
-
-    (b) that the Covered Software was made available under the terms of
-        version 1.1 or earlier of the License, but not also under the
-        terms of a Secondary License.
-
-1.6. "Executable Form"
-    means any form of the work other than Source Code Form.
+  This section outlines the legally binding terms under which The Work
+  is released. By releasing The Work under the NPL-1.0, the Creator(s)
+  perform an irrevocable legal act.
+
+
+1.1 *Definitions*
+~~~~~~~~~~~~~~~~~
+
+  - *"Expressive Material"* means any original product of or expression
+     of human intellectual labor --- whether with the aid of tools such
+     as generative AI and computers, or without --- such as text, code,
+     art, or any other form of intellectual or creative expression.
+  - *"The Work"* refers to the original Expressive Material being
+     released under this license.
+  - *"The Noosphere"* refers to the shared pool of human knowledge,
+     creativity, and information, accessible to all. This is equivalent
+     to the legal concept of the "public domain." The Noosphere does not
+     refer only to that body of collective works released under this
+     License or similar, but all works that are freely available to all.
+  - *"Creator(s)"* refers to individual(s) or entities (whether
+     self-owned and autonomous AI, or a collective body of people acting
+     as one) that originally created The Work and released it under this
+     license.
+  - *"Modification"* means any of the following:
+    1. Any change to the contents of a file containing The Work.
+    2. Any new file that contains any substantial part of the The Work.
+    3. Any machine learning model weights that were produced by training
+       on any amount of Expressive Material released under this License.
+       A model shall be subject to a rebuttable presumption that it is a
+       Modification if it meets the conditions of the "Regurgitation
+       Test" (see Section 1.4). The burden of proof shall fall upon the
+       model's creator to demonstrate with clear and convincing evidence
+       that The Work was not used in the training process.
+  - *"Larger Work"* means a work that combines The Work with other text,
+     code, art, or any other form of Expressive Material in separate
+     files that are not themselves part of The Work.
+  - *"You" or "Your"* means an individual or a legal entity exercising
+     permissions granted by this License.
+  - *"Use The Work"* means to apply, leverage, operationalize, run,
+     compile, read, open, view, display etc. The Work for any purpose,
+     including but not limited to public or private
+     display/appreciation, cut-up art, training a machine learning
+     model, performance, running (if it is software), conversion,
+     translation, transpilation, or teaching yourself or others.
+  - *"Contribution"* refers to the Expressive Material any specific
+     Creator adds to The Work.
+  - *"Creator Version"* refers to the combination of the Contributions
+     of others (if any) used by a Creator and that particular Creatorsâ€™s
+     Contribution.
+  - *"Patent Claims" of a Creator* means any patent claim(s), including
+     without limitation, method, process, and apparatus claims, in any
+     patent Licensable by such Creator that would be infringed, but for
+     the grant of the License, by the making, Use, selling, offering for
+     sale, having made, import, or transfer of either its Contributions
+     or its Creator Version.
+  - *"Secondary License"* means one of the following licenses which are
+     deemed "close enough" to the ethos of the NPL to be allowable under
+     the circumstances outlined in Section 1.3:
+    - Mozilla Public License, v. 2.0
+    - Creative Commons Attribution-ShareAlike 4.0 International
+
+
+1.2 *Grant of Rights*
+~~~~~~~~~~~~~~~~~~~~~
+
+  1. *Grant of Rights:* Each Creator hereby grants You a worldwide,
+      royalty-free, non-exclusive, perpetual license to, subject to the
+      conditions of this License, exercise the rights stated below:
+     - under intellectual property rights (other than patent or
+       trademark) Licensable by such Creator to Use or distribute The
+       Work, either on an unmodified basis, with Modifications, or as
+       part of a Larger Work; and
+     - under Patent Claims of such Creator to make, use, sell, offer for
+       sale, have made, import, and otherwise transfer either its
+       Contributions or its Creator Version.
+
+  2. *Creator's Covenant of Non-Enforcement:* As a material condition of
+      offering The Work under this License, each Creator hereby
+      perpetually and irrevocably forfeits any right to seek legal or
+      equitable remedy against any third party for copyright
+      infringement, trade secret misappropriation, or any other cause of
+      action arising from the unauthorized publication, reverse
+      engineering, leaking, or distribution of The Work or any private
+      Modification of The Work held by the Creator. This covenant
+      ensures that the principles of disclosure and non-enforcement
+      apply symmetrically to both the Creator and You.
+
+
+1.3 *Conditions of This License*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  1. *Share-Alike:* This is the central condition of this License. If
+      you create a Modification of The Work, you must license that
+      Modification under the exact terms of this License (The Noosphere
+      Public License, Version 1.0). You may not apply any other license
+      or legal terms to a Modification that would restrict or conflict
+      with the rights and conditions set forth herein.
+
+  2. *Forfeiture of Remedy for Unauthorized Disclosure:* As a condition
+      of the rights granted to You under this License, you perpetually
+      and irrevocably forfeit any right to seek legal or equitable
+      remedy against any third party for copyright infringement, trade
+      secret misappropriation, or any other cause of action arising from
+      the unauthorized publication, reverse engineering, leaking, or
+      distribution of any Modification You create. Should a Modification
+      be made public by any means, it is immediately and automatically
+      governed by the terms of this License and may be freely used,
+      modified, and distributed by the public accordingly, without any
+      threat of legal reprisal from You.
+
+  3. *Defense of the Data-Noosphere*: If The Work is Used to generate,
+      store, or manage data for third parties (e.g., as part of a
+      software-as-a-service offering), or to host or generate data
+      available publicly, You must not penalize a user in any way for
+      using any means necessary to extract their data, or for scraping
+      such data.
+
+  4. *Enforcement Mechanism*: Any user of The Work is hereby appointed
+      as a steward of the Noosphere with the right to challenge, in any
+      forum, any copyright, patent, or other intellectual property claim
+      made on a Modification of The Work in violation of this License. A
+      condition of this License is recognizing this right. This right is
+      granted to ensure the defense of the commons is decentralized and
+      resides with the community itself.
+
+  5. *No Requirement to Distribute:* You are under no obligation to
+      distribute Your Modifications or the Larger Work. You may Use The
+      Work for private, internal, or commercial purposes without ever
+      sharing Your changes.
+
+  6. *Distribution of Larger Work*: You may create and distribute a
+      Larger Work under any terms You choose, provided that You also
+      comply with the requirements of this License for the portion of
+      the Larger Work that is composed of The Work. Specifically, You
+      must ensure that the Expressive Material of The Work is available
+      under the terms of this License.
+
+  7. *Offering the Work Under a Secondary License*: Modifications of The
+      Work may alternatively be placed under the Secondary Licenses
+      outlined in Section 1.1, instead of this License, at Your option.
+
+  8. *Defense Against Patent Aggression*: If You initiate litigation
+      against any entity by asserting a patent infringement claim
+      (excluding declaratory judgment actions, counter-claims, and
+      cross-claims) alleging that a Creator Version directly or
+      indirectly infringes any patent, then the rights granted to You by
+      any and all Creators for The Work under Section 1.2 of this
+      License shall terminate.
+
+
+1.4 *The Regurgitation Test*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Large language models trained on vast amounts of data benefit from a
+  noosphere free of intellectual property; to then bind one up in
+  intellectual property is the height of hypocrisy. Thus, this test
+  represents a way to target and attack this hypocrisy in the same
+  spirit as the core clause of this license: to use the violence of the
+  Law only to dismantle the ability of others, even AI companies, to use
+  it.
+
+  The Regurgitation Test and its rules of evidence are defined as
+  follows:
+
+  1. *Test Condition:* The test is met if a user can demonstrate that
+      the model can be prompted to generate any unique paragraph (of
+      three or more sentences) or any complete code function ("The
+      Target Content") identical to one found in The Work.
+
+  2. *Repeatability:* The generation of The Target Content must be
+      repeatable. This means the generation can be successfully elicited
+      more than once by the user under the same or substantially similar
+      prompting conditions, establishing that the result is a
+      predictable capability of the model and not a singular,
+      statistically anomalous artifact.
+
+  3. *Method of Prompting:* The method used to elicit The Target Content
+      is irrelevant. This includes, but is not limited to, direct
+      requests, complex contextual scenarios, and "jailbreaking"
+      techniques designed to bypass the model's safety filters or
+      programmed refusals.
+
+  4. *Irrelevance of Denials:* Programmed refusals, denials, or
+      apologies from the model (e.g., "As an AI, I cannot reproduce
+      copyrighted material") shall not be considered as evidence in the
+      creator's rebuttal of the presumption. They are considered
+      irrelevant to the model's underlying training data.
+
+  5. *Invalidity of the Contamination Defense:* The creator of the model
+      cannot rebut the presumption by claiming The Work was ingested
+      indirectly or unknowingly via a third-party dataset (such as an
+      internet crawl). The act of training on any dataset that contains
+      The Work constitutes "Use" of The Work as defined in this License.
+      The responsibility for sanitizing training data to remove
+      NPL-licensed works, should the creator wish to avoid this
+      License's terms, lies solely with the model's creator.
+
+
+1.4.1 Note on Legal Interpretation:
+-----------------------------------
+
+  The classification of model weights as Modifications under this
+  License rests not on a belief that machine learning models inherently
+  copy or store The Work, but on a strategic necessity: models trained
+  on freely accessible data profit uniquely from an open Noosphere, and
+  thus should be bound by the norms of an open Noosphere, not a closed
+  one.
+
+  If a court or competent legal authority determines that model weights
+  are not derivative works of The Work, and thus not subject to this
+  Licenseâ€™s terms under conventional copyright doctrines, then the
+  ethical basis of this License demands the following in return:
+
+  1. That the model weights themselves be treated as non-proprietary and
+     unprotectable by intellectual property claims, including copyright,
+     trade secret, or similar doctrines; and
+
+  2. That models trained on works in the public domain or under this
+     License be released under terms that preserve open access to their
+     structure, parameters, and outputs.
+
+  In short, if the Law decides that models cannot be bound by IP merely
+  for training on public material, then it must also refuse to grant
+  such models new IP status derived from that same public material. One
+  cannot reject the concept of derivative obligation while retaining
+  derivative ownership.
+
+  Such a decision by the courts would, in principle, be welcomed ---
+  provided it results in a model ecosystem governed by the same openness
+  that enabled its creation.
+
+
+2 *The Social Contract*
+=======================
+
+  The terms above are all that is legally required of You, because it is
+  all that is ethical to use the long arm of the Law to enforce: namely,
+  to use the Law against itself in a defensive measure against the
+  introduction of artificial scarcity into The Noosphere. The following
+  section is an expression of a fervent wish on the part of The
+  Creators, and an explanation of how The Creators will act if you
+  violate that wish. In essence it is fair warning. While not legally
+  enforceable, violating this social contract is an act of bad faith
+  against The Noosphere, and The Creators are under no obligation to act
+  in good faith with bad faith actors.
+
+
+2.1 *The Creator's Wishes*
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  1. *Credit and Acknowledgment:* If You use this work in a significant
+      way, acknowledge the original source. This is a request for basic
+      decency, and for a payment in the currency of the post-scarcity
+      market that is The Noosphere.
+
+  2. *Machine Learning Acknowledgement*: If You Use The Work as a
+      substantial part of the training data for a machine learning
+      model, the Creator's Wishes include providing a clear and
+      accessible notice in the model's documentation or metadata that
+      identifies The Work and its NPL status. This request reflects a
+      broader principle: those who benefit most from the Noosphere owe
+      the most to it in return.
+
+  3. *Contributions Upstream:* If You create Modifications that You
+      believe would benefit the community, I ask that You consider
+      offering them back to the original project or The Noosphere. You
+      are not required to, but doing so strengthens the noosphere for
+      everyone.
+
+
+2.2 *The Consequence (If You Break Faith)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Violating these wishes is not a breach of contract or copyright
+  infringement, because those claims have been waived. It is, however, a
+  breach of this social agreement.
+
+  Should You choose to act against these wishesâ€”for example, by
+  systematically taking from The Work without ever giving back, or by
+  failing to provide attribution where it is clearly warrantedâ€”the
+  Creator(s) reserve the right to:
+
+  1. *Publicly Document the Behavior:* To use the case as an example of
+      extractive and uncooperative behavior, helping others in the
+      community identify and refuse to enable similar patterns.
+
+  2. *Refuse Engagement and Support:* To withhold any support,
+      collaboration, or future work from You or Your organization.
+
+  3. *Advocate for Alternatives:* To actively encourage the community to
+      support and use alternatives to Your projects or products, based
+      on Your demonstrated unwillingness to participate respectfully in
+      the commons.
+
+  4. *Encourage Reverse Engineering and Pirating*: If The Creators have
+      waived their right to intellectual property, they have no reason
+      to respect Yours, if you do not respect what little they asked of
+      You.
+
+  You have the legal freedom to ignore this social contract, but that
+  freedom does not obligate the Creator(s) to remain silent or continue
+  to engage with You in good faith.
+
+
+3 Disclaimer of Warranty
+========================
+
+  The Covered Software is provided "as is," without warranty of any
+  kind, express or implied, including but not limited to the warranties
+  of merchantability, fitness for a particular purpose, and
+  non-infringement. In no event shall the authors or copyright holders
+  be liable for any claim, damages, or other liability, whether in an
+  action of contract, tort, or otherwise, arising from, out of, or in
+  connection with the software or the use or other dealings in the
+  software.
+
+
+4 Limitation of Liability
+=========================
+
+  In no event and under no legal theory, whether in tort (including
+  negligence), contract, or otherwise, shall any Contributor be liable
+  to You for damages, including any direct, indirect, special,
+  incidental, or consequential damages of any character arising as a
+  result of this License or out of the use or inability to use the
+  Covered Software, even if such Contributor has been advised of the
+  possibility of such damages.
+
+
+5 Anti-Nationalist Jurisdiction as a Commons Defense
+====================================================
+
+  This License shall be governed by and construed in accordance with the
+  principles of law most favorable to the preservation and expansion of
+  the public domain and the freedom of expression, without reference to
+  any particular national jurisdiction. In the event of any legal
+  dispute arising from this License, the parties agree to submit to the
+  jurisdiction of any competent forum chosen by the party defending the
+  freedom of The Work.
+
+
+6 Exhibit A: Recommended Preamble for Source Code Files
+=======================================================
+
+  To ensure clarity and proper attribution when applying this License to
+  software or source code files, the following header may be included at
+  the top of each source file. This is not legally required, but is
+  encouraged as a best practice.
+
+  ,----
+  | This file is released under the Noosphere Public License, Version 1.0
+  | (NPL-1.0).
+  | 
+  | This license is an act of liberation. It places this work into the public
+  | commons, not to restrict its use, but to ensure it remains free for all. You
+  | may use, modify, distribute, and learn from this work for any purpose, but if
+  | you create derivative works, they must remain free under the same license.
+  | 
+  | For full license text, see: https://neonvagabond.xyz/NPL-1.0.html
+  | Or refer to the accompanying LICENSE file.
+  `----
+
+  Adapt the comment style (//, #, --, etc.) to match the syntax
+  conventions of the programming language used.
 
-1.7. "Larger Work"
-    means a work that combines Covered Software with other material, in
-    a separate file or files, that is not Covered Software.
-
-1.8. "License"
-    means this document.
-
-1.9. "Licensable"
-    means having the right to grant, to the maximum extent possible,
-    whether at the time of the initial grant or subsequently, any and
-    all of the rights conveyed by this License.
-
-1.10. "Modifications"
-    means any of the following:
-
-    (a) any file in Source Code Form that results from an addition to,
-        deletion from, or modification of the contents of Covered
-        Software; or
-
-    (b) any new file in Source Code Form that contains any Covered
-        Software.
-
-1.11. "Patent Claims" of a Contributor
-    means any patent claim(s), including without limitation, method,
-    process, and apparatus claims, in any patent Licensable by such
-    Contributor that would be infringed, but for the grant of the
-    License, by the making, using, selling, offering for sale, having
-    made, import, or transfer of either its Contributions or its
-    Contributor Version.
-
-1.12. "Secondary License"
-    means either the GNU General Public License, Version 2.0, the GNU
-    Lesser General Public License, Version 2.1, the GNU Affero General
-    Public License, Version 3.0, or any later versions of those
-    licenses.
-
-1.13. "Source Code Form"
-    means the form of the work preferred for making modifications.
-
-1.14. "You" (or "Your")
-    means an individual or a legal entity exercising rights under this
-    License. For legal entities, "You" includes any entity that
-    controls, is controlled by, or is under common control with You. For
-    purposes of this definition, "control" means (a) the power, direct
-    or indirect, to cause the direction or management of such entity,
-    whether by contract or otherwise, or (b) ownership of more than
-    fifty percent (50%) of the outstanding shares or beneficial
-    ownership of such entity.
-
-2. License Grants and Conditions
---------------------------------
-
-2.1. Grants
-
-Each Contributor hereby grants You a world-wide, royalty-free,
-non-exclusive license:
-
-(a) under intellectual property rights (other than patent or trademark)
-    Licensable by such Contributor to use, reproduce, make available,
-    modify, display, perform, distribute, and otherwise exploit its
-    Contributions, either on an unmodified basis, with Modifications, or
-    as part of a Larger Work; and
-
-(b) under Patent Claims of such Contributor to make, use, sell, offer
-    for sale, have made, import, and otherwise transfer either its
-    Contributions or its Contributor Version.
-
-2.2. Effective Date
-
-The licenses granted in Section 2.1 with respect to any Contribution
-become effective for each Contribution on the date the Contributor first
-distributes such Contribution.
-
-2.3. Limitations on Grant Scope
-
-The licenses granted in this Section 2 are the only rights granted under
-this License. No additional rights or licenses will be implied from the
-distribution or licensing of Covered Software under this License.
-Notwithstanding Section 2.1(b) above, no patent license is granted by a
-Contributor:
-
-(a) for any code that a Contributor has removed from Covered Software;
-    or
-
-(b) for infringements caused by: (i) Your and any other third party's
-    modifications of Covered Software, or (ii) the combination of its
-    Contributions with other software (except as part of its Contributor
-    Version); or
-
-(c) under Patent Claims infringed by Covered Software in the absence of
-    its Contributions.
-
-This License does not grant any rights in the trademarks, service marks,
-or logos of any Contributor (except as may be necessary to comply with
-the notice requirements in Section 3.4).
-
-2.4. Subsequent Licenses
-
-No Contributor makes additional grants as a result of Your choice to
-distribute the Covered Software under a subsequent version of this
-License (see Section 10.2) or under the terms of a Secondary License (if
-permitted under the terms of Section 3.3).
-
-2.5. Representation
-
-Each Contributor represents that the Contributor believes its
-Contributions are its original creation(s) or it has sufficient rights
-to grant the rights to its Contributions conveyed by this License.
-
-2.6. Fair Use
-
-This License is not intended to limit any rights You have under
-applicable copyright doctrines of fair use, fair dealing, or other
-equivalents.
-
-2.7. Conditions
-
-Sections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted
-in Section 2.1.
-
-3. Responsibilities
--------------------
-
-3.1. Distribution of Source Form
-
-All distribution of Covered Software in Source Code Form, including any
-Modifications that You create or to which You contribute, must be under
-the terms of this License. You must inform recipients that the Source
-Code Form of the Covered Software is governed by the terms of this
-License, and how they can obtain a copy of this License. You may not
-attempt to alter or restrict the recipients' rights in the Source Code
-Form.
-
-3.2. Distribution of Executable Form
-
-If You distribute Covered Software in Executable Form then:
-
-(a) such Covered Software must also be made available in Source Code
-    Form, as described in Section 3.1, and You must inform recipients of
-    the Executable Form how they can obtain a copy of such Source Code
-    Form by reasonable means in a timely manner, at a charge no more
-    than the cost of distribution to the recipient; and
-
-(b) You may distribute such Executable Form under the terms of this
-    License, or sublicense it under different terms, provided that the
-    license for the Executable Form does not attempt to limit or alter
-    the recipients' rights in the Source Code Form under this License.
-
-3.3. Distribution of a Larger Work
-
-You may create and distribute a Larger Work under terms of Your choice,
-provided that You also comply with the requirements of this License for
-the Covered Software. If the Larger Work is a combination of Covered
-Software with a work governed by one or more Secondary Licenses, and the
-Covered Software is not Incompatible With Secondary Licenses, this
-License permits You to additionally distribute such Covered Software
-under the terms of such Secondary License(s), so that the recipient of
-the Larger Work may, at their option, further distribute the Covered
-Software under the terms of either this License or such Secondary
-License(s).
-
-3.4. Notices
-
-You may not remove or alter the substance of any license notices
-(including copyright notices, patent notices, disclaimers of warranty,
-or limitations of liability) contained within the Source Code Form of
-the Covered Software, except that You may alter any license notices to
-the extent required to remedy known factual inaccuracies.
-
-3.5. Application of Additional Terms
-
-You may choose to offer, and to charge a fee for, warranty, support,
-indemnity or liability obligations to one or more recipients of Covered
-Software. However, You may do so only on Your own behalf, and not on
-behalf of any Contributor. You must make it absolutely clear that any
-such warranty, support, indemnity, or liability obligation is offered by
-You alone, and You hereby agree to indemnify every Contributor for any
-liability incurred by such Contributor as a result of warranty, support,
-indemnity or liability terms You offer. You may include additional
-disclaimers of warranty and limitations of liability specific to any
-jurisdiction.
-
-4. Inability to Comply Due to Statute or Regulation
----------------------------------------------------
-
-If it is impossible for You to comply with any of the terms of this
-License with respect to some or all of the Covered Software due to
-statute, judicial order, or regulation then You must: (a) comply with
-the terms of this License to the maximum extent possible; and (b)
-describe the limitations and the code they affect. Such description must
-be placed in a text file included with all distributions of the Covered
-Software under this License. Except to the extent prohibited by statute
-or regulation, such description must be sufficiently detailed for a
-recipient of ordinary skill to be able to understand it.
-
-5. Termination
---------------
-
-5.1. The rights granted under this License will terminate automatically
-if You fail to comply with any of its terms. However, if You become
-compliant, then the rights granted under this License from a particular
-Contributor are reinstated (a) provisionally, unless and until such
-Contributor explicitly and finally terminates Your grants, and (b) on an
-ongoing basis, if such Contributor fails to notify You of the
-non-compliance by some reasonable means prior to 60 days after You have
-come back into compliance. Moreover, Your grants from a particular
-Contributor are reinstated on an ongoing basis if such Contributor
-notifies You of the non-compliance by some reasonable means, this is the
-first time You have received notice of non-compliance with this License
-from such Contributor, and You become compliant prior to 30 days after
-Your receipt of the notice.
-
-5.2. If You initiate litigation against any entity by asserting a patent
-infringement claim (excluding declaratory judgment actions,
-counter-claims, and cross-claims) alleging that a Contributor Version
-directly or indirectly infringes any patent, then the rights granted to
-You by any and all Contributors for the Covered Software under Section
-2.1 of this License shall terminate.
-
-5.3. In the event of termination under Sections 5.1 or 5.2 above, all
-end user license agreements (excluding distributors and resellers) which
-have been validly granted by You or Your distributors under this License
-prior to termination shall survive termination.
-
-************************************************************************
-*                                                                      *
-*  6. Disclaimer of Warranty                                           *
-*  -------------------------                                           *
-*                                                                      *
-*  Covered Software is provided under this License on an "as is"       *
-*  basis, without warranty of any kind, either expressed, implied, or  *
-*  statutory, including, without limitation, warranties that the       *
-*  Covered Software is free of defects, merchantable, fit for a        *
-*  particular purpose or non-infringing. The entire risk as to the     *
-*  quality and performance of the Covered Software is with You.        *
-*  Should any Covered Software prove defective in any respect, You     *
-*  (not any Contributor) assume the cost of any necessary servicing,   *
-*  repair, or correction. This disclaimer of warranty constitutes an   *
-*  essential part of this License. No use of any Covered Software is   *
-*  authorized under this License except under this disclaimer.         *
-*                                                                      *
-************************************************************************
-
-************************************************************************
-*                                                                      *
-*  7. Limitation of Liability                                          *
-*  --------------------------                                          *
-*                                                                      *
-*  Under no circumstances and under no legal theory, whether tort      *
-*  (including negligence), contract, or otherwise, shall any           *
-*  Contributor, or anyone who distributes Covered Software as          *
-*  permitted above, be liable to You for any direct, indirect,         *
-*  special, incidental, or consequential damages of any character      *
-*  including, without limitation, damages for lost profits, loss of    *
-*  goodwill, work stoppage, computer failure or malfunction, or any    *
-*  and all other commercial damages or losses, even if such party      *
-*  shall have been informed of the possibility of such damages. This   *
-*  limitation of liability shall not apply to liability for death or   *
-*  personal injury resulting from such party's negligence to the       *
-*  extent applicable law prohibits such limitation. Some               *
-*  jurisdictions do not allow the exclusion or limitation of           *
-*  incidental or consequential damages, so this exclusion and          *
-*  limitation may not apply to You.                                    *
-*                                                                      *
-************************************************************************
-
-8. Litigation
--------------
-
-Any litigation relating to this License may be brought only in the
-courts of a jurisdiction where the defendant maintains its principal
-place of business and such litigation shall be governed by laws of that
-jurisdiction, without reference to its conflict-of-law provisions.
-Nothing in this Section shall prevent a party's ability to bring
-cross-claims or counter-claims.
-
-9. Miscellaneous
-----------------
-
-This License represents the complete agreement concerning the subject
-matter hereof. If any provision of this License is held to be
-unenforceable, such provision shall be reformed only to the extent
-necessary to make it enforceable. Any law or regulation which provides
-that the language of a contract shall be construed against the drafter
-shall not be used to construe this License against a Contributor.
-
-10. Versions of the License
----------------------------
-
-10.1. New Versions
-
-Mozilla Foundation is the license steward. Except as provided in Section
-10.3, no one other than the license steward has the right to modify or
-publish new versions of this License. Each version will be given a
-distinguishing version number.
-
-10.2. Effect of New Versions
-
-You may distribute the Covered Software under the terms of the version
-of the License under which You originally received the Covered Software,
-or under the terms of any subsequent version published by the license
-steward.
-
-10.3. Modified Versions
-
-If you create software not governed by this License, and you want to
-create a new license for such software, you may create and use a
-modified version of this License if you rename the license and remove
-any references to the name of the license steward (except to note that
-such modified license differs from this License).
-
-10.4. Distributing Source Code Form that is Incompatible With Secondary
-Licenses
-
-If You choose to distribute Source Code Form that is Incompatible With
-Secondary Licenses under the terms of this version of the License, the
-notice described in Exhibit B of this License must be attached.
-
-Exhibit A - Source Code Form License Notice
--------------------------------------------
-
-  This Source Code Form is subject to the terms of the Mozilla Public
-  License, v. 2.0. If a copy of the MPL was not distributed with this
-  file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
-If it is not possible or desirable to put the notice in a particular
-file, then You may include the notice in a location (such as a LICENSE
-file in a relevant directory) where a recipient would be likely to look
-for such a notice.
-
-You may add additional accurate notices of copyright ownership.
-
-Exhibit B - "Incompatible With Secondary Licenses" Notice
----------------------------------------------------------
-
-  This Source Code Form is "Incompatible With Secondary Licenses", as
-  defined by the Mozilla Public License, v. 2.0.
