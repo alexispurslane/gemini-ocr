@@ -70,10 +70,11 @@ This pipeline executes a multi stage document transformation.
 
 - The script first submits the entire PDF to Gemini, requesting a JSON list detailing the text and level of each major heading/section. Ideally, this is derived from the table of contents. If absent, for shorter texts, the model infers the structure page by page. This generates a global structural context to ensure overall coherence during localized chunk harmonization.
 - The script then converts each page of the input PDF into a separate JPG image at 150dpi, caching the results in an output folder.
-- It processes these images in batches, feeding them to Gemini 2.0 Flash Lite to perform OCR and extract the raw text content into an intermediate file. Each image is processed as a separate request to minimize hallucinations, but each request in a batch is processed simultaniously.
-- The raw text is then split into large, overlapping chunks. This ensures context is not lost at the boundaries during the next step.
-- Each chunk is passed to Gemini 2.0 Flash with a detailed harmonization prompt, which reflows paragraphs, standardizes markdown, and removes OCR artifacts, and uses the table of contents generated in the first step to decide, when it comes across something that is likely to be a heading, what level the heading should be. Again, these chunks are treated as separate asynchronous requests to minimize hallucinations and confusion.
-- The cleaned chunks are stitched together into the final output markdown file.
+- It processes these images in batches, feeding them to Gemini 2.0 Flash Lite to perform OCR and extract the raw text content into an intermediate file. Each image is processed as a separate request to minimize hallucinations, but each request in a batch is processed simultaniously. Gemini, during the OCR step, uses the table of contents structural context to help determine what text should be treated as a heading or section title.
+- The raw text is then preprocessed to apply the table of contents and generally clean up the document.
+- Subsequently, the text is split into large, overlapping chunks. This ensures context is not lost at the boundaries during the next step.
+- Each chunk is passed to Gemini 2.0 Flash with a detailed harmonization prompt, which reflows paragraphs, standardizes markdown, removes OCR artifacts. Again, these chunks are treated as separate asynchronous requests to minimize hallucinations and confusion.
+- Each chunk returned by the previous step is then compared to the pre-harmonization chunk (normalized to remove capitalization and punctuation, collapse repeated spaces, and so on) and the harmonized chunk is only accepted if the fuzzy similarity of the two texts is over 95% --- otherwise the text returned will be assumed to have too many hallucations (the model sometimes starts rewriting sentences). The cleaned chunks are stitched together into the final output markdown file.
 - Finally, it runs a `wdiff` between the raw intermediate text and the final harmonized text. The diff report is fed to Gemini one last time to perform a QA analysis and generate a list of potential errors.
 - Finally, the tool outputs a total cost estimation. Combining all the steps, the cost appears to be roughly 3,000 pages per dollar, and the cost goes down the more pages you add.
 
@@ -82,13 +83,13 @@ This pipeline executes a multi stage document transformation.
 │      PDF Input       ├─────┐
 └──────────┬───────────┘     │
            │                 │
-           ▼                │
+           ▼               │
 ┌──────────────────────┐     │
 │ Submit PDF to Gemini │     │
 │ (Request JSON TOC)   │     │
 └──────────┬───────────┘     │
            │                 │
-           ▼                │
+           ▼               │
 ┌──────────────────────┐     │
 │ Global Struct. Ctxt  │     │
 └──────────┬───────────┘     │
@@ -99,7 +100,7 @@ This pipeline executes a multi stage document transformation.
            │              │     ╰──────────────────────╮
            │              ▼ (Batched Async Requests)   │
            │   ┌──────────────────────┐                │
-           │   │  Gemini 2.0 Flash    │                │
+           ├──➤│  Gemini 2.0 Flash    │                │
            │   │       (OCR)          │                │
            │   └──────────┬───────────┘                │
            │              │                            │
@@ -110,23 +111,32 @@ This pipeline executes a multi stage document transformation.
            │              │
            │              ▼
            │   ┌──────────────────────┐
-           │   │  Split into Chunks   │ (Large, Overlapping)
-           │   └──────────┬───────────┘
-           │              │
-           │              ▼ (Batched Async Requests)
-           │   ┌──────────────────────┐
-           │   │  Gemini 2.0 Flash    │
-           │   │   (Harmonization)    │
-           │   └──────────┬───────────┘
-           │              │
-           │              ▼
-           │   ┌──────────────────────┐
-           │   │   Stitched Chunks    │
-           │   └──────────┬───────────┘
-  (Regex)  │              │
-           │              ▼
-           │   ┌──────────────────────┐     ┌──────────────────────┐
-           └──➤│   Markdown w/ TOC    │     │  Raw Text (Temp)     │
+           └──➤│      Apply TOC       │ (Using another set of deterministic heuristics)
+               └──────────┬───────────┘
+                          │
+                          ▼
+               ┌──────────────────────┐
+               │  Split into Chunks   │ (Large, Overlapping)
+               └──────────┬───────────┘
+                          │
+                          ▼ (Batched Async Requests)
+               ┌──────────────────────┐
+               │  Gemini 2.0 Flash    │
+               │   (Harmonization)    │
+               └──────────┬───────────┘
+                          │
+                          ▼
+               ┌─────────────────────────┐
+               │  Filter Hallucinations  │ (Fuzzy Heuristic Check)
+               └──────────┬──────────────┘
+                          │
+               ┌────────────────────┐
+               │   Stitch Chunks    │ (Intelligently add or remove line breaks)
+               └──────────┬─────────┘
+                          │
+                          ▼
+               ┌──────────────────────┐     ┌──────────────────────┐
+               │   Markdown w/ TOC    │     │  Raw Text (Temp)     │
                └──────────┬───────────┘     └──────────┬───────────┘
                           │              (wdiff)       │
                           └──────────────────┬─────────┘
@@ -134,7 +144,7 @@ This pipeline executes a multi stage document transformation.
                                    ┌──────────────────────┐
                                    │   Diff Report        │
                                    │   (wdiff Output)     │
-                                   └──────────────────────┘          
+                                   └──────────────────────┘
 ```
 
 ## Example
