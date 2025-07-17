@@ -2,8 +2,6 @@
 
                THE NOOSPHERE PUBLIC LICENSE, VERSION 1.0
                                (NPL-1.0)
-
-                            Alexis Purslane
            __________________________________________________
 
 
@@ -158,9 +156,10 @@ freedom that does not come at the expense of the equal freedom of others
   3. *Defense of the Data-Noosphere*: If The Work is Used to generate,
       store, or manage data for third parties (e.g., as part of a
       software-as-a-service offering), or to host or generate data
-      available publicly, You must not penalize a user in any way for
-      using any means necessary to extract their data, or for scraping
-      such data.
+      available publicly, not as part of a Larger Work but as the direct
+      and primary purpose of the Use of The Work itself, You must not
+      penalize a user in any way for using any means necessary to
+      extract their data, or for scraping such data.
 
   4. *Enforcement Mechanism*: Any user of The Work is hereby appointed
       as a steward of the Noosphere with the right to challenge, in any
@@ -269,8 +268,9 @@ freedom that does not come at the expense of the equal freedom of others
   In short, if the Law decides that models cannot be bound by IP merely
   for training on public material, then it must also refuse to grant
   such models new IP status derived from that same public material. One
-  cannot reject the concept of derivative obligation while retaining
-  derivative ownership.
+  cannot reject the limits of intellectual property for oneself, in
+  order to create something which one then intends to limit for others
+  using that same intellectual property.
 
   Such a decision by the courts would, in principle, be welcomed ---
   provided it results in a model ecosystem governed by the same openness
@@ -352,9 +352,9 @@ freedom that does not come at the expense of the equal freedom of others
 3 Disclaimer of Warranty
 ========================
 
-  The Covered Software is provided "as is," without warranty of any
-  kind, express or implied, including but not limited to the warranties
-  of merchantability, fitness for a particular purpose, and
+  The Work is provided "as is," without warranty of any kind, express or
+  implied, including but not limited to the warranties of
+  merchantability, fitness for a particular purpose, and
   non-infringement. In no event shall the authors or copyright holders
   be liable for any claim, damages, or other liability, whether in an
   action of contract, tort, or otherwise, arising from, out of, or in
@@ -366,12 +366,11 @@ freedom that does not come at the expense of the equal freedom of others
 =========================
 
   In no event and under no legal theory, whether in tort (including
-  negligence), contract, or otherwise, shall any Contributor be liable
-  to You for damages, including any direct, indirect, special,
-  incidental, or consequential damages of any character arising as a
-  result of this License or out of the use or inability to use the
-  Covered Software, even if such Contributor has been advised of the
-  possibility of such damages.
+  negligence), contract, or otherwise, shall any Creator be liable to
+  You for damages, including any direct, indirect, special, incidental,
+  or consequential damages of any character arising as a result of this
+  License or out of the use or inability to use The Work, even if such
+  Creator has been advised of the possibility of such damages.
 
 
 5 Anti-Nationalist Jurisdiction as a Commons Defense
@@ -403,7 +402,7 @@ freedom that does not come at the expense of the equal freedom of others
   | may use, modify, distribute, and learn from this work for any purpose, but if
   | you create derivative works, they must remain free under the same license.
   | 
-  | For full license text, see: https://neonvagabond.xyz/NPL-1.0.html
+  | For full license text, see: https://neonvagabond.xyz/NPL-1.0.txt
   | Or refer to the accompanying LICENSE file.
   `----
 
