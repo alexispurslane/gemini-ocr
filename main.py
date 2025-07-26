@@ -120,7 +120,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def normalize(s, remove_whitespace=False):
     s = re.sub(r"  +", " ", s.translate(str.maketrans(",#", "  "))).strip().lower()
     if remove_whitespace:
-        return re.sub(r"\s+|\n", "", s)
+        return re.sub(r"\s+|\n+", "", s)
     else:
         return s
 
@@ -136,15 +136,20 @@ def apply_table_of_contents(harmonized_text, headings):
         else:
             line_already_merged = False
             for heading in headings:
-                nh = normalize(heading["text"].split(":")[-1].split(" by ")[0])
+                search = re.search(r"^([A-Za-z +0-9].*)[:.] (.*)$", heading["text"])
+                last = heading["text"]
+                if search:
+                    last = max(reversed(search.groups()), key=len)
+                nh = normalize(last.split(" by ")[0])
                 if nl.endswith(nh) and not next_line_is_continuation:
+                    print("Applying heading: ", heading)
                     without = nl.removesuffix(nh)
-                    print(next_nonempty_line)
                     if len(without) > 0.90*len(nl):
                         lines[i] = line + "\n" + int(heading["level"])*"#" + " " + heading["text"]
                     else:
                         lines[i] = int(heading["level"])*"#" + " " + heading["text"]
                 elif not line_already_merged and not nl.endswith(".") and next_line_is_continuation:
+                    print("Merging lines", lines[i], "|", next_nonempty_line)
                     lines[i] = lines[i] + " " + next_nonempty_line
                     del lines[ni+1]
                     line_already_merged = True
@@ -168,7 +173,8 @@ def harmonize_document(input_file, output_folder, headings):
     with open(requests_file, 'w+') as f, open(input_file, "r") as f2:
         ## Apply TOC
         extracted_text = apply_table_of_contents(re.sub("<BLANK_LINE>", "\n", f2.read()), headings)
-
+        # extracted_text = f2.read()
+        
         ## Create requests and ground truth to compare to
         chunks = split_overlapping(extracted_text, 2000, CHUNK_OVERLAP_WORDS)
         ground_truth_chunk_output = []
@@ -206,7 +212,9 @@ def harmonize_document(input_file, output_folder, headings):
 
     with open(output_folder+".md", "w") as f:
         for ground_truth, model_output in zip(ground_truth_chunk_output, chunk_output):
-            if SequenceMatcher(None, normalize(ground_truth, remove_whitespace=True), normalize(model_output, remove_whitespace=True)).ratio() > 0.95:
+            a = normalize(ground_truth, remove_whitespace=True)
+            b = normalize(model_output, remove_whitespace=True)
+            if SequenceMatcher(None, a, b).ratio() > 0.95:
                 f.write(model_output)
             else:
                 print("\033[93m⚠️  Model has output a harmonized chunk that is significantly different, in normalized form, from the original. Substituting the original back in to preserve document accuracy.\033[0m")

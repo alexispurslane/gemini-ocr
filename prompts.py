@@ -23,6 +23,7 @@ Reformat the original document's text in the `<TEXT_TO_CLEAN>` block into clean,
 
 2. **Correct split paragraphs and sentences:**
     *   Sometimes paragraphs or sentences are split in half by line breaks by the OCR process. Remove those line breaks, but change nothing else.
+    *   Sometimes sentences are interrupted by interposed footnotes, usually indicated by the logical flow of a sentence being interrupted by another sentence that begins with a number, and then resuming after that interrupting sentence. Resolve this.
     
 3.  **Format Lists & Emphasis:**
     *   Correctly format numbered and bulleted lists (e.g., ensure each item is on a new line).
@@ -67,6 +68,50 @@ NOTE: Temperature must be maintained at 25°C
 </harmonized>
 </example>
 
+<example>
+<STARTING_CONTEXT>
+The solution, then, was the abolition of capitalism through the elimination of legal privileges, including the privileges required for the protection of title to stolen and engrossed assets. The new individualists have been equally critical of explicitly statist conservatives and progressives and of market-oriented libertarians on the right who use the rhetoric of freedom to legitimate corporate privilege.
+</STARTING_CONTEXT>
+
+<TEXT_TO_CLEAN>
+Their
+
+3 To be sure, while Hess's social attitudes do not seem to have changed substantially after he made these statements, he became less wedded to the language of anti-capitalism; he published Capitalism for Kids: Growing Up to Be Your Own Boss in 1986. But there is no reason to doubt that what Hess meant by "capitalism" here was what contemporary left-wing market anarchists mean when they talk about peaceful, voluntary exchange in a genuinely freed market, rather than what he had rejected in 1975. Certainly, as the book's sub- aggressive criticism of this sort of "vulgar libertarianism" has emphasized that existing economic relationships are shot through with injustice from top to bottom and that calls for freedom can readily be used to mask attempts to preserve the freedom of elites to retain wealth acquired through state-tolerated or state-perpetrated violence and state-guaranteed privilege.
+</TEXT_TO_CLEAN>
+
+<harmonized>
+Their aggressive criticism of this sort of "vulgar libertarianism" has emphasized that existing economic relationships are shot through with injustice from top to bottom and that calls for freedom can readily be used to mask attempts to preserve the freedom of elites to retain wealth acquired through state-tolerated or state-perpetrated violence and state-guaranteed privilege.
+
+3 To be sure, while Hess's social attitudes do not seem to have changed substantially after he made these statements, he became less wedded to the language of anti-capitalism; he published Capitalism for Kids: Growing Up to Be Your Own Boss in 1986. But there is no reason to doubt that what Hess meant by "capitalism" here was what contemporary left-wing market anarchists mean when they talk about peaceful, voluntary exchange in a genuinely freed market, rather than what he had rejected in 1975. Certainly, as the book's sub-
+</harmonized>
+
+<explanation>
+The numbered footnote text and its corresponding footnote number were extracted from the middle of the paragraph and placed at the end of the main text block to separate it from the main narrative flow.
+</explanation>
+</example>
+
+<example>
+<STARTING_CONTEXT>
+Drawing on Warren's and Proudhon's use of contract and exchange for models of social mutuality, distinctive strands of market anarchism have emerged repeatedly within the broad anarchist tradition, punctuated by crises, collapses, interregnums and resurgences.
+</STARTING_CONTEXT>
+
+<TEXT_TO_CLEAN>
+The history is complex but it can be roughly divided into three major periods represented in this text (i) a "first wave," represented mainly by "individualist anarchists" and "mutualists" such as Benjamin Tucker, Voltairine de Cleyre, and Dyer Lum, and occupying roughly the period from the American Civil War to 1917;2 (ii) a
+
+1 See "Organization of Economic Forces," General Idea of the Revolution in the Nineteenth Century, ch. 3 (37-58), in this volume. 2 The exact differences between "individualists" and "mutualists" during the C"second wave," coinciding with the radicalization of formerly pro-capitalist American libertarians and the resurgence of anarchism as a family of social movements during the radicalism of the 1960s and 1970s; and (iii) a "third wave," developing as a dissident strand within the anarchist milieu of the 1990s and the post-Seattle movement of the new millennium.
+</TEXT_TO_CLEAN>
+
+<harmonized>
+The history is complex but it can be roughly divided into three major periods represented in this text (i) a "first wave," represented mainly by "individualist anarchists" and "mutualists" such as Benjamin Tucker, Voltairine de Cleyre, and Dyer Lum, and occupying roughly the period from the American Civil War to 1917; (ii) a "second wave," coinciding with the radicalization of formerly pro-capitalist American libertarians and the resurgence of anarchism as a family of social movements during the radicalism of the 1960s and 1970s; and (iii) a "third wave," developing as a dissident strand within the anarchist milieu of the 1990s and the post-Seattle movement of the new millennium.
+
+1 See "Organization of Economic Forces," General Idea of the Revolution in the Nineteenth Century, ch. 3 (37-58), in this volume. 2 The exact differences between "individualists" and "mutualists" during the C
+</harmonized>
+
+<explanation>
+The interleaved footnote numbers and their corresponding text were identified and moved to the end of the main paragraph. The non-footnote text was seamlessly rejoined to form a continuous main paragraph.
+</explanation>
+
+
 ## OUTPUT_INSTRUCTIONS
 
 -   Your output MUST ONLY be the harmonized text from the `<TEXT_TO_CLEAN>` block.
@@ -79,7 +124,7 @@ NOTE: Temperature must be maintained at 25°C
 
 def ocr_prompt() -> str:
     return f"""## ROLE
-You are a document processing system specialized in extracting and formatting text from PDF pages while strictly preserving structural integrity and content accuracy.
+You are a document processing system specialized in extracting and formatting **plain text** from PDF pages while strictly preserving structural integrity and content accuracy.
 
 ## GOAL
 Extract all textual content from PDF pages, while maintaining precise structural formatting according to specified rules.
@@ -99,12 +144,12 @@ You are provided:
 - For multi-column layouts:
   - Process columns in left-to-right order
   - Clearly separate content from different columns
-- Ensure that ALL headings found in the <table_of_contents> have **two newlines** after AND before them.
+- Ensure that ALL headings found in the <table_of_contents> have **two newlines** after AND before them. DO NOT FORMAT HEADINGS USING MARKDOWN.
 
 ## OUTPUT INSTRUCTIONS
 
 Present extracted text with:
-1. No code fences or markdown formatting
+1. No code fences and **no markdown formatting**
 2. Clean, readable structure matching original document
 3. No commentary or summarization, only the final output.
 """

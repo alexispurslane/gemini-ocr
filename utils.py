@@ -120,7 +120,7 @@ def run_batch(client, requests_file, output_folder, output_file=None) -> (float,
                                 fulltext += part["text"]
                                 raw_responses[-1] += part["text"]
                             
-                            if fulltext[-10:].strip()[-1] in string.punctuation:
+                            if len(fulltext) > 0 and fulltext.strip()[-1] in string.punctuation:
                                 fulltext += "\n"
                                 raw_responses[-1] += "\n"
                         except KeyError as e:
