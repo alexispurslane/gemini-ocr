@@ -8,18 +8,58 @@ from contextlib import suppress
 import re
 import glob
 import os
-import time
-import sys
 from google.genai import types
 import pdf2image
 from PIL import Image
 import io
-from utils import *
 import pypdf
 
 from typing import Iterator
 
 WORD_JOIN_REGEX = re.compile(r"(.)- (.)")
+
+class RecitationError(Exception):
+    def __init__(self, partial_cost=0):
+        self.partial_cost = partial_cost
+        super().__init__("Recitation error occurred")
+
+def _process_results(file_content: str, initial_cost: float) -> tuple[float, str, list[str]]:
+    cost = initial_cost
+    responses = sorted([parse_json(line) for line in file_content.split("\n") if len(line) != 0],
+                       key=lambda x: int(x["key"].split("/")[-1]))
+    fulltext = ""
+    raw_responses = []
+    
+    for i, response in enumerate(responses):
+        if response is not None and "response" in response:
+            response_data = response["response"]
+            try:
+                # Accumulate cost before checking for errors
+                cost += ((int(response_data["usageMetadata"]["promptTokenCount"]) / 1_000_000) * 0.10 + 
+                         (int(response_data["usageMetadata"].get("candidatesTokenCount", 0)) / 1_000_000) * 0.4) * 0.5
+                
+                current_candidate = response_data.get("candidates", [{}])[0]
+                if current_candidate.get("finishReason") == "RECITATION":
+                    raise RecitationError(partial_cost=cost)
+
+                raw_responses.append("")
+                for part in current_candidate.get("content", {}).get("parts", []):
+                    fulltext += part.get("text", "")
+                    raw_responses[-1] += part.get("text", "")
+
+                if len(fulltext) > 0 and fulltext.strip() and fulltext.strip()[-1] in string.punctuation:
+                    fulltext += "\n"
+                    raw_responses[-1] += "\n"
+            
+            except KeyError as e:
+                print(f"🐍  \033[31mMissing expected property on response object {i}: \033[0m")
+                pprint.pp(response_data)
+                raise e
+        else:
+            print(f"⚠️  Malformed response object found: {response}")
+
+    fulltext = WORD_JOIN_REGEX.sub(r"\1\2", fulltext.replace("\n\n", "\0").replace("\n", " ").replace("\0", "\n\n"))
+    return (cost, fulltext, raw_responses)
 
 
 def split_overlapping(text: str, chunk_size: int, overlap: int) -> Iterator[str]:    
@@ -50,99 +90,75 @@ def parse_json(s):
 def sort_key(s: str) -> list:
     return [int(p) if p.isdigit() else p for p in re.findall(r'\D+|\d+', s)]
 
-def run_batch(client, requests_file, output_folder, output_file=None) -> (float, str, list[str]):
+def run_batch(client, requests_file, output_folder, output_file=None, attempt=0, max_retries=3) -> tuple[float, str, list[str]]:
     global BATCH_JOB
-    cost = 0
+    
     uploaded_file = client.files.upload(
         file=requests_file,
-        config=types.UploadFileConfig(display_name=requests_file,
-                                      mime_type='jsonl')
+        config=types.UploadFileConfig(display_name=requests_file, mime_type='jsonl')
     )
 
-    if uploaded_file != None:
-        BATCH_JOB = client.batches.create(
-            model="gemini-2.0-flash",
-            src=uploaded_file.name,
-            config={
-                'display_name': output_folder+"batch-1",
-            }
-        )
+    if uploaded_file is None:
+        raise Exception("Failed to upload batch file.")
 
-        completed_states = set([
-            'JOB_STATE_SUCCEEDED',
-            'JOB_STATE_FAILED',
-            'JOB_STATE_CANCELLED',
-        ])
-        print(f"\033[32m✨ Waiting for job \033[33m{BATCH_JOB.name}\033[32m to complete...\033[0m")
+    BATCH_JOB = client.batches.create(
+        model="gemini-2.0-flash",
+        src=uploaded_file.name,
+        config={'display_name': f"{output_folder}-batch"}
+    )
+
+    completed_states = {'BATCH_STATE_RUNNING', 'JOB_STATE_FAILED', 'JOB_STATE_CANCELLED'}
+    print(f"\033[32m✨ Waiting for job \033[33m{BATCH_JOB.name}\033[32m to complete...\033[0m")
+    
+    start_time = datetime.datetime.now()
+    spinner_chars = ['-', '\\', '|', '/']
+    spinner_index = 0
+
+    while BATCH_JOB.state.name not in completed_states:
+        sys.stdout.write("\033[K")  # Clear the line
+        elapsed_time_str = str(datetime.datetime.now() - start_time).split('.')[0]
+        
+        if BATCH_JOB.state.name == "BATCH_STATE_RUNNING":
+            print(f"Pending {spinner_chars[spinner_index]} Elapsed: {elapsed_time_str}", end="\r")
+            spinner_index = (spinner_index + 1) % len(spinner_chars)
+        else:
+            print(f"Current state: {BATCH_JOB.state.name} Elapsed: {elapsed_time_str}", end="\r")
+        
+        time.sleep(1)
         BATCH_JOB = client.batches.get(name=BATCH_JOB.name)
-        spinner_chars = ['-', '\\', '|', '/']
-        spinner_index = 0
-        start_time = datetime.datetime.now()
-        elapsed_time = 0
-        elapsed_time_str = ""
 
-        while BATCH_JOB.state.name not in completed_states:
-            sys.stdout.write("\033[K")  # Clear the line
-            elapsed_time = datetime.datetime.now() - start_time
-            elapsed_time_str = str(elapsed_time).split('.')[0]
+    if BATCH_JOB.state.name == 'JOB_STATE_FAILED':
+        raise RuntimeError(f"❌ \033[31mBatch job '{BATCH_JOB.name}' failed with state '{BATCH_JOB.state.name}'.\033[0m\n\nFull job details:\n{BATCH_JOB}")
 
-            if BATCH_JOB.state.name == "JOB_STATE_PENDING":
-                print(f"Pending {spinner_chars[spinner_index]} Elapsed: {elapsed_time_str}", end="\r")
-                spinner_index = (spinner_index + 1) % len(spinner_chars)
-            else:
-                print(f"Current state: {BATCH_JOB.state.name} Elapsed: {elapsed_time_str}", end="\r")
-
-            time.sleep(1)
-            BATCH_JOB = client.batches.get(name=BATCH_JOB.name)
-
-        if BATCH_JOB.state.name == 'JOB_STATE_FAILED':
-            print(f"\033[31m❌ Error: Batch job failed.\033[0m Check logs for details.")
-            return (0, "")
-        elif BATCH_JOB.state.name == 'JOB_STATE_SUCCEEDED':
-            if BATCH_JOB.dest and BATCH_JOB.dest.file_name:
-                result_file_name = BATCH_JOB.dest.file_name
-
-                print(f"\033[32m✅ Job finished:\033[0m Final time: \033[33m{elapsed_time_str}\033[0m")
-
-                file_content = client.files.download(file=result_file_name).decode('utf-8')
-                responses = sorted([parse_json(line) for line in file_content.split("\n") if len(line) != 0],
-                                   key=lambda x: int(x["key"].split("/")[-1]))
-                fulltext = ""
-                raw_responses = []
-                for i, response in enumerate(responses):
-                    if response != None and "response" in response:
-                        response = response["response"]
-                        try:
-                            cost += ((int(response["usageMetadata"]["promptTokenCount"]) / 1_000_000) * 0.10 + (int(response["usageMetadata"].get("candidatesTokenCount", 0)) / 1_000_000) * 0.4) * 0.5
-                            
-                            raw_responses.append("")
-                            for part in response["candidates"][0]["content"]["parts"]:
-                                fulltext += part["text"]
-                                raw_responses[-1] += part["text"]
-                            
-                            if len(fulltext) > 0 and fulltext.strip()[-1] in string.punctuation:
-                                fulltext += "\n"
-                                raw_responses[-1] += "\n"
-                        except KeyError as e:
-                                print(f"\U0001F6A8  \033[31mMissing expected property on response object {i}: \033[0m")
-                                pprint.pp(response)
-                                if response["candidates"][0]["finishReason"] == "RECITATION":
-                                    print("\033[93m⚠️  Recitation error received, retrying.\033[0m")
-                                    (cost2, fulltext, pages) = run_batch(client, requests_file, output_folder, output_file)
-                                    return (cost + cost2, fulltext, pages)
-                                raise e
-                    else:
-                        print(response)
-
-                fulltext = WORD_JOIN_REGEX.sub(r"\1\2", fulltext.replace("\n\n", "\0").replace("\n", " ").replace("\0", "\n\n"))
-                if output_file != None:
+    elif BATCH_JOB.state.name == 'JOB_STATE_SUCCEEDED':
+        if BATCH_JOB.dest and BATCH_JOB.dest.file_name:
+            result_file_name = BATCH_JOB.dest.file_name
+            elapsed_time_str = str(datetime.datetime.now() - start_time).split('.')[0]
+            print(f"\n\033[32m✅ Job finished:\033[0m Final time: \033[33m{elapsed_time_str}\033[0m")
+            
+            file_content = client.files.download(file=result_file_name).decode('utf-8')
+            
+            try:
+                (total_cost, fulltext, raw_responses) = _process_results(file_content, 0)
+                
+                if output_file is not None:
                     with open(output_file, "w") as f:
-                        f.seek(0)
                         f.write(fulltext)
-                        print("\033[32m✅ File saved!\033[0m")
-                return (cost, fulltext, raw_responses)
+                    print("\033[32m✅ File saved!\033[0m")
+                
+                return (total_cost, fulltext, raw_responses)
+
+            except RecitationError as e:
+                if attempt < max_retries - 1:
+                    backoff_time = 2 ** (attempt + 1)
+                    print(f"\033[93m⚠️  Recitation error received. Retrying in {backoff_time}s (attempt {attempt + 2}/{max_retries})... \033[0m")
+                    time.sleep(backoff_time)
+                    (cost2, fulltext, pages) = run_batch(client, requests_file, output_folder, output_file, attempt=attempt + 1)
+                    return (e.partial_cost+cost2, fulltext, pages)
+                else:
+                    raise RuntimeError(f"Maximum retries ({max_retries}) reached for recitation error.")
     else:
-        raise Exception("Failed to upload batch.")
+        raise Exception("Batch job did not complete successfully.")
     
 def convert_pdf_to_images(pdf_path, output_folder, dpi=150, header_offset=0, footer_offset=0) -> tuple[list[str], str, int]:
     # Create output directory if it doesn't exist
